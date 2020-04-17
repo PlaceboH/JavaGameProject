@@ -1,48 +1,159 @@
 package com.company;
 import java.awt.*;
+
+
 public class Player {
-    private double x;
-    private double y;
-    private double dx;
-    private double dy;
 
-    private double width;
-    private double height;
+    private boolean isFiring = false;
+    private boolean stayRight = false;
+    private boolean stayLeft = false;
+    private boolean isLookUp = false;
+    private boolean isLay = false;
+    private boolean changeWeapon = false;
+    private boolean isJump = false;
 
-    private boolean left;
-    private boolean right;
-    private boolean jump;
-    private boolean fall;
+    private class FloatRect{
+        public float width;
+        public float top;
+        public float left;
+        public float height;
 
-    private double moveSpeed;
-    private double maxSpeed;
-    private double maxFallSpeed;
-    private double stopSpeed;
-    private double jumpStart;
-    private double gravitation;
+        FloatRect(float left, float top, float width, float height ){
+            this.left = left;
+            this.top = top;
+            this.width = width;
+            this.height = height;
+        }
+    }
 
+    private FloatRect rect;
+    private double dx,dy;
+    private boolean onGround, life;
+    private double currentFrame, jumpFrame, runUpFrame;
+    private int score, health;
+    private double TimeShoot;
+    private double timer;
+    private double timerL;
+    private double BulletTimer;
     private TileMap tileMap;
 
+
+    public void setX(int x){ rect.left = x; }
+    public void setY(int y){ rect.top = y; }
+    public void setStayRight(boolean b){ stayRight = b; }
+    public void setStayLeft(boolean b){ stayLeft = b; }
+    public void setIsLay(boolean b){ isLay = b; }
+    public void setLookUp(boolean b){ isLookUp = b; }
+    public void setFiring(boolean b){ isFiring = b; }
+    public void setJump(boolean b){ isJump = b; }
+    public void setChangeWeapon(boolean b){ changeWeapon = b; }
+
+    public boolean getStayRight(){ return stayRight; }
+    public boolean getStayLeft(){ return stayLeft; }
+    public boolean getIsLay(){ return isLay; }
+    public boolean getLookUp(){ return isLookUp; }
+    public boolean getFiring(){ return isFiring; }
+    public boolean getChangeWeapon(){ return changeWeapon; }
+
     public Player(TileMap tMap){
+        rect = new FloatRect(100, 200, 32, 32);
         tileMap = tMap;
-        width = 20;
-        height = 20;
-        moveSpeed = 0.6;
-        maxSpeed = 4.5;
-        stopSpeed = 0.3;
-        jumpStart = -11.0;
-        gravitation = 0.64;
-    }
-    public void setLeft(boolean l) {
-        left = l;
-    }
-    public void setRight(boolean r){
-        right = r;
+        score = 0;
+        life = true;
+        health = 100;
+        dx = 0;
+        dy = 0;
     }
 
-    private void update(){
+    public void draw(Graphics2D g){
+        int tailX = tileMap.getX();
+        int tailY = tileMap.getY();
+
+        g.setColor(Color.red);
+        g.fillRect( (int)rect.left, (int)rect.top, (int)rect.width, (int)rect.height);
+    }
+
+    public void update() {
+        double moveSpeed = 0.5;
+        double maxSpeed = 3;
+        double stopSpeed = 1;
+        double fallingSpeed = 0.5;
+        double maxFallingSpeed = 8;
+        double jumpSpeed = -10;
+
+        if(life){
+
+            if(stayRight){
+                dx += moveSpeed;
+                if(dx >= maxSpeed) {
+                    dx = maxSpeed;
+                }
+            }
+            else if(stayLeft){
+                dx -= moveSpeed;
+                if(dx <= -maxSpeed){
+                    dx = -maxSpeed;
+                }
+            }
+            else {
+                if(dx > 0){
+                    dx -= stopSpeed;
+                    if(dx < 0){
+                        dx = 0;
+                    }
+                }
+                else if(dx < 0){
+                    dx += stopSpeed;
+                    if(dx > 0){
+                        dx = 0;
+                    }
+                }
+            }
+
+            if(isJump && onGround){
+                dy = jumpSpeed;
+                onGround = false;
+                isJump = false;
+            }
+
+        }
+        rect.left += dx;
+        Collision(0);
+        if (!onGround) {
+            dy += fallingSpeed;
+            if(dy >= maxFallingSpeed){
+                dy = maxFallingSpeed;
+            }
+        }
+        rect.top += dy;
+        onGround = false;
+        Collision(1);
 
     }
 
 
+    public void Collision(int dir) {
+
+        int sizeOfTile = tileMap.getTileSize();
+        for (int i = (int)rect.top / sizeOfTile; i < (rect.top + rect.height) / sizeOfTile; i++) {
+            for (int j = (int)rect.left / sizeOfTile; j < (rect.left + rect.width) / sizeOfTile; j++) {
+                if (tileMap.map[i][j] == '1') {
+                    if ((dx > 0) && (dir == 0))
+                        rect.left = j * sizeOfTile - rect.width;
+                    if ((dx < 0) && (dir == 0))
+                        rect.left = j * sizeOfTile + rect.width;
+                    if ((dy > 0) && (dir == 1)) {
+                        rect.top = i * sizeOfTile - rect.height ;
+                        dy = 0;
+                        onGround = true;
+                    }
+                    if ((dy < 0) && (dir == 1)) {
+                        rect.top = i * sizeOfTile + sizeOfTile;
+                        dy = 0;
+                    }
+                }
+            }
+        }
+
+    }
 }

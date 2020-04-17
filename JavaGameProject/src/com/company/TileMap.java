@@ -8,7 +8,7 @@ public class TileMap {
     private int tileSize;
     private int mapWidth;
     private int mapHeight;
-    private int [][] map;
+    public char [][] map;
 
 
     public TileMap(String s, int tileSize){
@@ -23,13 +23,11 @@ public class TileMap {
 
             System.out.println(mapWidth);
 
-            map = new int[mapHeight][mapWidth];
-            String delimiters = " ";
+            map = new char[mapHeight][mapWidth];
             for(int i = 0; i < mapHeight; i++){
                 String line = br.readLine();
-                String[] tokens = line.split(delimiters);
                 for(int j = 0; j < mapWidth; j++){
-                    map[i][j] = Integer.parseInt(tokens[j]);
+                    map[i][j] = line.charAt(j);
                 }
             }
         }
@@ -41,13 +39,24 @@ public class TileMap {
 
     public void update(){}
 
+    public int getX(){ return  x; }
+    public int getY(){ return  y; }
+    public int getCol(int x){ return  x / tileSize; }
+    public int getRow(int y){ return  y /tileSize; }
+    public int getTile(int col, int row){ return map[row][col]; }
+    public int getTileSize(){ return tileSize; }
+    public void setX(int sx){ x = sx; }
+    public void setY(int sy){ y = sy; }
+
+
+
     public void draw(Graphics2D g){
         for(int i = 0; i < mapHeight; i++){
             for(int j = 0; j < mapWidth; j++){
-                if(map[i][j] == 0){
+                if(map[i][j] == '1'){
                     g.setColor(Color.black);
                 }
-                else if(map[i][j] == 1){
+                else if(map[i][j] == ' '){
                     g.setColor(Color.white);
                 }
                 else{
