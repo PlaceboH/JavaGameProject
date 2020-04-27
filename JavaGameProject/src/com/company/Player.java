@@ -66,11 +66,8 @@ public class Player {
     }
 
     public void draw(Graphics2D g){
-        int tailX = tileMap.getX();
-        int tailY = tileMap.getY();
-
         g.setColor(Color.red);
-        g.fillRect( (int)rect.left, (int)rect.top, (int)rect.width, (int)rect.height);
+        g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
     }
 
     public void update() {
@@ -128,6 +125,11 @@ public class Player {
         rect.top += dy;
         onGround = false;
         Collision(1);
+
+
+        if(rect.left > GameP.WIDTH/2 && rect.left < tileMap.getTileSize()*tileMap.getMapWidth() - GameP.WIDTH/2) {
+            tileMap.setX((int) (rect.left - GameP.WIDTH / 2));
+        }
 
     }
 

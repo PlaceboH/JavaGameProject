@@ -39,11 +39,11 @@ public class TileMap {
 
     public void update(){}
 
+    public int getMapWidth(){ return mapWidth; }
     public int getX(){ return  x; }
     public int getY(){ return  y; }
     public int getCol(int x){ return  x / tileSize; }
     public int getRow(int y){ return  y /tileSize; }
-    public int getTile(int col, int row){ return map[row][col]; }
     public int getTileSize(){ return tileSize; }
     public void setX(int sx){ x = sx; }
     public void setY(int sy){ y = sy; }
@@ -62,7 +62,7 @@ public class TileMap {
                 else{
                     System.out.println("Error draw tails");
                 }
-                g.fillRect(x + j * tileSize, y + i * tileSize, tileSize, tileSize);
+                g.fillRect( j * tileSize - x,  i * tileSize, tileSize, tileSize);
 
             }
         }
