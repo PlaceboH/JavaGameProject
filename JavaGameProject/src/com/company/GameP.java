@@ -13,6 +13,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     public static final int WIDTH = 32 * 23;
     public static final int HEIGHT = 512;
 
+    public enum STATE {PLAY, MENU}
+    public static STATE isMenu = STATE.MENU;
+
     // thread
     private Thread thread;
     private boolean isRun;
@@ -22,10 +25,12 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     // img
     private BufferedImage img;
     private Graphics2D g;
+    private Background backImg;
 
     // my objects
     private TileMap tileMap;
     private Player player;
+
 
     public GameP(){
         super();
@@ -47,7 +52,8 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         isRun = true;
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) img.getGraphics();
-        tileMap = new TileMap("C:\\Users\\placebo\\IdeaProjects\\Contra\\src\\com\\company\\map1.txt", 32);
+        tileMap = new TileMap("JavaGameProject/src/com/company/map1.txt", 32);
+        backImg = new Background("JavaGameProject/Image/Back2.jpg", "JavaGameProject/Image/menuImg.png");
         player = new Player(tileMap);
         player.setX(250);
         player.setY(200);
@@ -64,9 +70,16 @@ public class GameP extends JPanel implements Runnable, KeyListener {
 
             startTimer = System.nanoTime();
 
-            update();
-            render();
+
+            if(isMenu == STATE.MENU){
+                backImg.drawMenu(g);
+            }
+            else{
+                update();
+                render();
+            }
             draw();
+
 
             elapsedTimer = (System.nanoTime() - startTimer)/1000000;
             pausedTimer = Math.abs(targetTime - elapsedTimer);
@@ -89,14 +102,15 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     }
 
     private void render(){
+        backImg.draw(g);
         tileMap.draw(g);
         player.draw(g);
     }
 
     private void draw(){
-        Graphics g2 = getGraphics();
+        Graphics g2 = getGraphics(); // from graphics2d to graphics
         g2.drawImage(img, 0, 0, null);
-        g2.dispose();
+        g2.dispose(); // method for gc
     }
 
     @Override

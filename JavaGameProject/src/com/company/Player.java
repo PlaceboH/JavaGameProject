@@ -2,7 +2,7 @@ package com.company;
 import java.awt.*;
 
 
-public class Player {
+public class Player implements Entity {
 
     private boolean isFiring = false;
     private boolean stayRight = false;
@@ -12,19 +12,6 @@ public class Player {
     private boolean changeWeapon = false;
     private boolean isJump = false;
 
-    private class FloatRect{
-        public float width;
-        public float top;
-        public float left;
-        public float height;
-
-        FloatRect(float left, float top, float width, float height ){
-            this.left = left;
-            this.top = top;
-            this.width = width;
-            this.height = height;
-        }
-    }
 
     private FloatRect rect;
     private double dx,dy;
@@ -127,12 +114,11 @@ public class Player {
         Collision(1);
 
 
-        if(rect.left > GameP.WIDTH/2 && rect.left < tileMap.getTileSize()*tileMap.getMapWidth() - GameP.WIDTH/2) {
+        if(rect.left > GameP.WIDTH/2 && rect.left < tileMap.getTileSize()*tileMap.getMapWidth() - GameP.WIDTH/2+14) {
             tileMap.setX((int) (rect.left - GameP.WIDTH / 2));
         }
 
     }
-
 
     public void Collision(int dir) {
 

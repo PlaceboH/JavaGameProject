@@ -1,4 +1,5 @@
 package com.company;
+import javax.swing.*;
 import java.io.*;
 import java.awt.*;
 
@@ -7,21 +8,18 @@ public class TileMap {
     private int y;
     private int tileSize;
     private int mapWidth;
+    private Image img;
     private int mapHeight;
     public char [][] map;
 
 
     public TileMap(String s, int tileSize){
         this.tileSize = tileSize;
-
+        img = new ImageIcon("JavaGameProject/Image/plates.png").getImage();
         try{
-            System.out.println("is good?");
             BufferedReader br = new BufferedReader(new FileReader(s));
-            System.out.println("yes");
             mapWidth = Integer.parseInt(br.readLine());
             mapHeight = Integer.parseInt(br.readLine());
-
-            System.out.println(mapWidth);
 
             map = new char[mapHeight][mapWidth];
             for(int i = 0; i < mapHeight; i++){
@@ -32,7 +30,7 @@ public class TileMap {
             }
         }
         catch (Exception e){
-            System.out.println("NOOOOOO");
+            System.out.println("Bad link to files!");
         }
 
     }
@@ -57,13 +55,14 @@ public class TileMap {
                     g.setColor(Color.black);
                 }
                 else if(map[i][j] == ' '){
-                    g.setColor(Color.white);
+                    continue;
                 }
                 else{
                     System.out.println("Error draw tails");
                 }
-                g.fillRect( j * tileSize - x,  i * tileSize, tileSize, tileSize);
+                //g.fillRect( j * tileSize - x,  i * tileSize, tileSize, tileSize);
 
+                g.drawImage(img, j * tileSize - x, i * tileSize, null);
             }
         }
     }
