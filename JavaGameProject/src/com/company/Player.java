@@ -27,6 +27,8 @@ public class Player implements Entity {
 
     public void setX(int x){ rect.left = x; }
     public void setY(int y){ rect.top = y; }
+    public float getX(){ return rect.left; }
+    public float getY(){ return rect.top; }
     public void setStayRight(boolean b){ stayRight = b; }
     public void setStayLeft(boolean b){ stayLeft = b; }
     public void setIsLay(boolean b){ isLay = b; }
@@ -52,11 +54,13 @@ public class Player implements Entity {
         dy = 0;
     }
 
+    @Override
     public void draw(Graphics2D g){
         g.setColor(Color.red);
         g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
     }
 
+    @Override
     public void update() {
         double moveSpeed = 0.5;
         double maxSpeed = 3;
@@ -100,6 +104,10 @@ public class Player implements Entity {
                 isJump = false;
             }
 
+            if(isFiring){
+                GameP.bullets.add(new Bullet());
+            }
+
         }
         rect.left += dx;
         Collision(0);
@@ -120,6 +128,7 @@ public class Player implements Entity {
 
     }
 
+    @Override
     public void Collision(int dir) {
 
         int sizeOfTile = tileMap.getTileSize();
@@ -142,6 +151,11 @@ public class Player implements Entity {
                 }
             }
         }
+
+    }
+
+    @Override
+    public void bulletColl() {
 
     }
 }

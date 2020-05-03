@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.*;
 
 public class GameP extends JPanel implements Runnable, KeyListener {
@@ -29,9 +30,11 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private Background backImg;
 
     // my objects
-    private TileMap tileMap;
-    private Player player;
-    private Menu menu;
+    private  Menu menu;
+    public static TileMap tileMap;
+    public static Player player;
+    public static EasyEnemy easyEnemy;
+    public static ArrayList<Bullet> bullets;
 
 
     public GameP(){
@@ -60,6 +63,8 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         player = new Player(tileMap);
         player.setX(250);
         player.setY(200);
+        easyEnemy = new EasyEnemy(tileMap, tileMap.xe, tileMap.ye);
+        bullets = new ArrayList<Bullet>();
     }
 
     @Override
@@ -105,16 +110,30 @@ public class GameP extends JPanel implements Runnable, KeyListener {
 
     }
 
-    //////////////////////////////////
+
     private void update(){
         tileMap.update();
         player.update();
+        easyEnemy.update();
+        for(int i = 0; i < bullets.size(); i++ ){
+            bullets.get(i).update();
+            boolean remove = bullets.get(i).remove();
+            if(remove == true){
+                bullets.remove(i);
+                i--;
+            }
+            System.out.println(bullets.size());
+        }
     }
 
     private void render(){
         backImg.draw(g);
         tileMap.draw(g);
         player.draw(g);
+        easyEnemy.draw(g);
+        for(int i = 0; i < bullets.size(); i++ ){
+            bullets.get(i).draw(g);
+        }
     }
 
     private void draw(){
@@ -161,6 +180,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
             if(code == keyEvent.VK_ESCAPE){
                 isMenu = STATE.MENU;
             }
+            if(code == keyEvent.VK_X){
+                player.setFiring(true);
+            }
         }
 
     }
@@ -173,6 +195,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         }
         if(code == keyEvent.VK_RIGHT){
             player.setStayRight(false);
+        }
+        if(code == keyEvent.VK_X){
+            player.setFiring(false);
         }
 
     }
