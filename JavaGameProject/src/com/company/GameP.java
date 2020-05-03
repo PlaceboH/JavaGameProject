@@ -6,7 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
+import java.io.IOException;
+import javax.swing.*;
 
 public class GameP extends JPanel implements Runnable, KeyListener {
 
@@ -30,6 +31,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     // my objects
     private TileMap tileMap;
     private Player player;
+    private Menu menu;
 
 
     public GameP(){
@@ -50,10 +52,11 @@ public class GameP extends JPanel implements Runnable, KeyListener {
 
     public void initialization(){
         isRun = true;
+        menu = new Menu();
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) img.getGraphics();
         tileMap = new TileMap("JavaGameProject/src/com/company/map1.txt", 32);
-        backImg = new Background("JavaGameProject/Image/Back2.jpg", "JavaGameProject/Image/menuImg.png");
+        backImg = new Background("JavaGameProject/Image/Back2.jpg", "JavaGameProject/Image/Lif9.gif");
         player = new Player(tileMap);
         player.setX(250);
         player.setY(200);
@@ -72,7 +75,14 @@ public class GameP extends JPanel implements Runnable, KeyListener {
 
 
             if(isMenu == STATE.MENU){
-                backImg.drawMenu(g);
+                try {
+                    backImg.draw(g);
+                    menu.draw(g);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (FontFormatException e) {
+                    e.printStackTrace();
+                }
             }
             else{
                 update();
@@ -114,21 +124,43 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent keyEvent) {
-
-    }
+    public void keyTyped(KeyEvent keyEvent) {}
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         int code = keyEvent.getKeyCode();
-        if(code == keyEvent.VK_LEFT){
-            player.setStayLeft(true);
+        if(isMenu == STATE.MENU){
+            if(code == keyEvent.VK_UP){
+                menu.moveUp(g);
+            }
+            if(code == keyEvent.VK_DOWN){
+                menu.moveDown(g);
+            }
+            if(code == keyEvent.VK_ENTER) {
+                if(menu.getSelectIndex() == 0) {
+                    isMenu = STATE.PLAY;
+                }
+                else if( menu.getSelectIndex() == 1){
+
+                }
+                else if( menu.getSelectIndex() == 2){
+                    System.exit(0);
+                }
+            }
         }
-        if(code == keyEvent.VK_RIGHT){
-            player.setStayRight(true);
-        }
-        if(code == keyEvent.VK_SPACE){
-            player.setJump(true);
+        else{
+            if(code == keyEvent.VK_LEFT){
+                player.setStayLeft(true);
+            }
+            if(code == keyEvent.VK_RIGHT){
+                player.setStayRight(true);
+            }
+            if(code == keyEvent.VK_SPACE){
+                    player.setJump(true);
+            }
+            if(code == keyEvent.VK_ESCAPE){
+                isMenu = STATE.MENU;
+            }
         }
 
     }
@@ -142,5 +174,6 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         if(code == keyEvent.VK_RIGHT){
             player.setStayRight(false);
         }
+
     }
 }

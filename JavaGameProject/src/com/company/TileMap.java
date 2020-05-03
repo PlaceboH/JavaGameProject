@@ -54,7 +54,7 @@ public class TileMap {
                 if(map[i][j] == '1'){
                     g.setColor(Color.black);
                 }
-                else if(map[i][j] == ' '){
+                else if(map[i][j] == ' ' || map[i][j] == '0'){
                     continue;
                 }
                 else{
