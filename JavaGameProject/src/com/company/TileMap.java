@@ -13,8 +13,8 @@ public class TileMap {
     private int mapHeight;
     public char [][] map;
 
-    public int xe;
-    public int ye;
+    public int xe = 250;
+    public int ye = 200;
 
     public TileMap(String s, int tileSize){
         this.tileSize = tileSize;
@@ -61,8 +61,8 @@ public class TileMap {
                 }
                 else if(map[i][j] == 'e'){
                     map[i][j] = ' ';
-                    xe = j*32;
-                    ye = i*32;
+//                    xe = j*32;
+//                    ye = i*32;
                   //  gameP.initializationEnemy(j*32, i*32);
                 }
                 else{
