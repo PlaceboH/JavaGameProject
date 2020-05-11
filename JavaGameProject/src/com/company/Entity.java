@@ -1,9 +1,10 @@
 package com.company;
 
 import java.awt.*;
+import java.io.IOException;
 
 public interface Entity {
-     class FloatRect{
+    class FloatRect{
         public float width;
         public float top;
         public float left;
@@ -16,9 +17,8 @@ public interface Entity {
             this.height = height;
         }
     }
-    void draw(Graphics2D g);
+    void draw(Graphics2D g) throws IOException, FontFormatException;
     void update();
     void Collision(int dir);
-    void bulletColl();
-
+    void bulletColl(Bullet bullet);
 }

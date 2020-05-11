@@ -15,7 +15,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     public static final int WIDTH = 32 * 23;
     public static final int HEIGHT = 512;
 
-    public enum STATE {PLAY, MENU}
+    public enum STATE {PLAY, MENU, ACHIVE}
     public static STATE isMenu = STATE.MENU;
 
     // thread
@@ -24,17 +24,20 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private int FPS = 60;
     private long targetTime = 1000/FPS;
 
+
+
     // img
     private BufferedImage img;
     private Graphics2D g;
     private Background backImg;
-
     // my objects
     private  Menu menu;
+    private Achievements achievements;
     public static TileMap tileMap;
     public static Player player;
-    public static EasyEnemy easyEnemy;
+    public static ArrayList<EasyEnemy> easyEnemies;
     public static ArrayList<Bullet> bullets;
+
 
 
     public GameP(){
@@ -53,7 +56,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         addKeyListener(this);
     }
 
-    public void initialization(){
+    private void initialization(){
         isRun = true;
         menu = new Menu();
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -63,7 +66,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         player = new Player(tileMap);
         player.setX(250);
         player.setY(200);
-        easyEnemy = new EasyEnemy(tileMap, tileMap.xe, tileMap.ye);
+        easyEnemies = new ArrayList<EasyEnemy>();
         bullets = new ArrayList<Bullet>();
     }
 
@@ -73,12 +76,8 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         long startTimer;
         long elapsedTimer;
         long pausedTimer;
-
         while (isRun){
-
             startTimer = System.nanoTime();
-
-
             if(isMenu == STATE.MENU){
                 try {
                     backImg.draw(g);
@@ -88,6 +87,10 @@ public class GameP extends JPanel implements Runnable, KeyListener {
                 } catch (FontFormatException e) {
                     e.printStackTrace();
                 }
+            }
+            else if(isMenu == STATE.ACHIVE){
+                backImg.draw(g);
+                achievements.draw(g);
             }
             else{
                 update();
@@ -114,7 +117,6 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private void update(){
         tileMap.update();
         player.update();
-        easyEnemy.update();
         for(int i = 0; i < bullets.size(); i++ ){
             bullets.get(i).update();
             boolean remove = bullets.get(i).remove();
@@ -122,17 +124,50 @@ public class GameP extends JPanel implements Runnable, KeyListener {
                 bullets.remove(i);
                 i--;
             }
-            System.out.println(bullets.size());
+        }
+        for(int i = 0; i < easyEnemies.size(); i++ ){
+            easyEnemies.get(i).update();
+            boolean remove = easyEnemies.get(i).remove();
+            if(remove == true){
+                easyEnemies.remove(i);
+                i--;
+            }
+        }
+        if(player.getLife() == true) {
+            for (int i = 0; i < easyEnemies.size(); i++) {
+                Enemy e = easyEnemies.get(i);
+                for (int j = 0; j < bullets.size(); j++) {
+                    int hp = e.health;
+                    e.bulletColl(bullets.get(j));
+                    if (hp != e.health) {
+                        bullets.remove(j);
+                        break;
+                    }
+                }
+                if (e.remove() == true) {
+                    easyEnemies.remove(i);
+                    i--;
+                }
+                double dx = e.rect.left - player.getX();
+                double dy = e.rect.top - player.getY();
+                double dist = Math.sqrt(dx * dx + dy * dy);
+                if ((int) dist <= 32) {
+                    player.hit();
+                }
+            }
         }
     }
 
     private void render(){
         backImg.draw(g);
         tileMap.draw(g);
-        player.draw(g);
-        easyEnemy.draw(g);
         for(int i = 0; i < bullets.size(); i++ ){
             bullets.get(i).draw(g);
+        }
+        player.draw(g);
+
+        for(int i = 0; i < easyEnemies.size(); i++ ){
+            easyEnemies.get(i).draw(g);
         }
     }
 
@@ -158,6 +193,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
             if(code == keyEvent.VK_ENTER) {
                 if(menu.getSelectIndex() == 0) {
                     isMenu = STATE.PLAY;
+                    player.timerShock();
                 }
                 else if( menu.getSelectIndex() == 1){
 
@@ -167,15 +203,22 @@ public class GameP extends JPanel implements Runnable, KeyListener {
                 }
             }
         }
-        else{
+        else if(isMenu == STATE.PLAY){
             if(code == keyEvent.VK_LEFT){
                 player.setStayLeft(true);
+                player.setRun(true);
+                player.setStayRight(false);
+            }
+            if(code == keyEvent.VK_UP){
+                player.setLookUp(true);
             }
             if(code == keyEvent.VK_RIGHT){
                 player.setStayRight(true);
+                player.setRun(true);
+                player.setStayLeft(false);
             }
             if(code == keyEvent.VK_SPACE){
-                    player.setJump(true);
+                player.setJump(true);
             }
             if(code == keyEvent.VK_ESCAPE){
                 isMenu = STATE.MENU;
@@ -191,13 +234,16 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     public void keyReleased(KeyEvent keyEvent) {
         int code = keyEvent.getKeyCode();
         if(code == keyEvent.VK_LEFT){
-            player.setStayLeft(false);
+            player.setRun(false);
         }
         if(code == keyEvent.VK_RIGHT){
-            player.setStayRight(false);
+            player.setRun(false);
         }
         if(code == keyEvent.VK_X){
             player.setFiring(false);
+        }
+        if(code == keyEvent.VK_UP){
+            player.setLookUp(false);
         }
 
     }

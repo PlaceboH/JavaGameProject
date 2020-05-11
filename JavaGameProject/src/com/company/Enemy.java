@@ -3,7 +3,6 @@ import java.awt.*;
 
 class Enemy implements Entity {
 
-    protected boolean isFiring = false;
     protected boolean stayRight = false;
     protected boolean stayLeft = false;
     protected boolean see = false;
@@ -20,6 +19,7 @@ class Enemy implements Entity {
         life = true;
         tileMap = tMap;
     }
+
 
     @Override
     public void draw(Graphics2D g) {
@@ -43,25 +43,38 @@ class Enemy implements Entity {
         Collision(1);
     }
 
+    public boolean remove(){
+        if(health > 0){
+            return false;
+        }
+        else { return  true; }
+    }
+
+
     @Override
     public void Collision(int dir) {
         int sizeOfTile = tileMap.getTileSize();
         for (int i = (int)rect.top / sizeOfTile; i < (rect.top + rect.height) / sizeOfTile; i++) {
             for (int j = (int)rect.left / sizeOfTile; j < (rect.left + rect.width) / sizeOfTile; j++) {
-                if (tileMap.map[i][j] == '1') {
+                if (tileMap.map[i][j] == '1'){
                     if ((dx > 0) && (dir == 0)) rect.left = j * sizeOfTile - rect.width;
                     if ((dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
                     if ((dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; dy = 0; onGround = true; }
                     if ((dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; dy = 0; }
                     if(!see) dx *= -1;
                 }
+
             }
         }
     }
 
     @Override
-    public void bulletColl() {
-
+    public void bulletColl(Bullet bullet) {
+        if (bullet.getX() > rect.left && bullet.getX() < rect.left + 32 && bullet.getY() < rect.top + 32 && bullet.getY() > rect.top) {
+            health -= bullet.getDamage();
+            if(dx > 0) dx -= 0.02;
+            else dx += 0.02;
+        }
     }
 
 }
