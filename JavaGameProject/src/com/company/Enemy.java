@@ -1,18 +1,18 @@
 package com.company;
+
 import java.awt.*;
 
 class Enemy implements Entity {
 
     protected boolean stayRight = false;
-    protected boolean stayLeft = false;
-    protected boolean see = false;
-    protected FloatRect rect;
+    protected boolean detected = false;
     protected double fallingSpeed;
     protected double dx,dy;
     protected boolean onGround, life;
     protected int health;
-    protected TileMap tileMap;
 
+    protected Entity.FloatRect rect;
+    protected TileMap tileMap;
 
     Enemy(TileMap tMap, int x, int y, int w, int h){
         rect = new FloatRect(x, y, w, h);
@@ -20,22 +20,20 @@ class Enemy implements Entity {
         tileMap = tMap;
     }
 
-
-    @Override
-    public void draw(Graphics2D g) {
-        g.setColor(Color.red);
-        g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
-    }
-
     @Override
     public void update() {
 
-        if(life == true) {
-
+        if(life) {
             rect.left += dx;
             Collision(0);
             if (!onGround) {
                 dy += fallingSpeed;
+            }
+            if(dx > 0){
+                stayRight = true;
+            }
+            else {
+                stayRight = false;
             }
         }
         rect.top += dy;
@@ -50,7 +48,6 @@ class Enemy implements Entity {
         else { return  true; }
     }
 
-
     @Override
     public void Collision(int dir) {
         int sizeOfTile = tileMap.getTileSize();
@@ -61,20 +58,25 @@ class Enemy implements Entity {
                     if ((dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
                     if ((dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; dy = 0; onGround = true; }
                     if ((dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; dy = 0; }
-                    if(!see) dx *= -1;
+
+                    if(!detected) dx *= -1;
                 }
 
             }
         }
     }
 
-    @Override
-    public void bulletColl(Bullet bullet) {
+    public void bulletColl(BulletPlayer bullet) {
         if (bullet.getX() > rect.left && bullet.getX() < rect.left + 32 && bullet.getY() < rect.top + 32 && bullet.getY() > rect.top) {
             health -= bullet.getDamage();
             if(dx > 0) dx -= 0.02;
             else dx += 0.02;
         }
+    }
+
+    public void draw(Graphics2D g) {
+        g.setColor(Color.red);
+        g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
     }
 
 }

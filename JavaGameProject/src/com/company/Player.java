@@ -1,6 +1,6 @@
 package com.company;
-import java.awt.*;
 
+import java.awt.*;
 
 public class Player implements Entity {
 
@@ -13,22 +13,16 @@ public class Player implements Entity {
     private boolean isJump = false;
     private boolean life = true;
     private boolean isRun;
-
-
-    protected FloatRect rect;
-    protected int score, health;
     private double dx,dy;
     private boolean onGround;
     private long firingTimer;
     private long firingDelay;
+    private long hitTimer;
+    private long hitDelay;
 
-    private long timer_s;   // start time
-    private long timer_f;  // finish time
-    private long timer_d; // timer duration
-
-
+    private FloatRect rect;
     private TileMap tileMap;
-
+    private int score, health;
 
     public void setX(int x){ rect.left = x; }
     public void setY(int y){ rect.top = y; }
@@ -54,53 +48,24 @@ public class Player implements Entity {
     public Player(TileMap tMap){
         rect = new FloatRect(100, 200, 32, 32);
         firingTimer = System.nanoTime();
+        hitTimer = System.nanoTime();
         firingDelay = 150;
+        hitDelay = 1000;
         tileMap = tMap;
         score = 0;
         health = 100;
         dx = 0;
         dy = 0;
-        timer_s = 0;
-        timer_f = 0;
-        timer_d = 1000;
-
-    }
-
-    @Override
-    public void draw(Graphics2D g) {
-        g.setColor(Color.blue);
-        g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
-
-        g.setColor(Color.CYAN);
-        g.drawString("Health: " + health, 30 , 40 );
-
-    }
-
-
-    // Timer shock
-    public boolean timerShock(){
-        if(timer_s == 0){
-            timer_s = System.currentTimeMillis();
-            timer_f = timer_s + timer_d;
-        }
-        if(timer_f <= System.currentTimeMillis()){
-            timer_s = 0;
-            return true;
-        }
-        return false;
     }
 
 
     public void hit(){
-        if(timerShock()){
+        long elapsed = (System.nanoTime() - hitTimer)/1000000;
+        if(elapsed > hitDelay && life) {
             health -= 15;
-            // some Sound
-            timerShock();
+            dy = -5;
+            hitTimer = System.nanoTime();
         }
-        isJump = true;
-        dy = -5;
-        isJump = false;
-
         System.out.println(health);
     }
 
@@ -114,10 +79,12 @@ public class Player implements Entity {
         double maxFallingSpeed = 8;
         double jumpSpeed = -10;
 
-
         if(life){
 
-            if(health <= 0) life = false;
+            if(health <= 0){
+                life = false;
+                health = 0;
+            }
 
             if(stayRight && isRun){
                 dx += moveSpeed;
@@ -155,13 +122,13 @@ public class Player implements Entity {
             if(isFiring){
                 long elapsed = (System.nanoTime() - firingTimer)/1000000;
                 if(elapsed > firingDelay) {
-                    GameP.bullets.add(new Bullet(false));
+                    GameP.bullets.add(new BulletPlayer(false));
                     firingTimer = System.nanoTime();
                 }
             }
 
+            rect.left += dx;
         }
-        rect.left += dx;
         Collision(0);
         if (!onGround) {
             dy += fallingSpeed;
@@ -172,13 +139,22 @@ public class Player implements Entity {
         rect.top += dy;
         onGround = false;
         Collision(1);
-
-        if(rect.left > GameP.WIDTH/2 && rect.left < tileMap.getTileSize()*tileMap.getMapWidth() - GameP.WIDTH/2) {
-            tileMap.setX((int) (rect.left - GameP.WIDTH / 2));
-        }
-
     }
 
+    public void draw(Graphics2D g) {
+        g.setColor(Color.blue);
+        g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
+
+        if(health > 20) {
+            g.setColor(Color.orange);
+        }
+        else {
+            g.setColor(Color.red);
+        }
+        g.fillRect(77, 25, health, 15);
+        g.drawString("Hp", 20, 50);
+
+    }
 
     @Override
     public void Collision(int dir) {
@@ -187,27 +163,16 @@ public class Player implements Entity {
         for (int i = (int)rect.top / sizeOfTile; i < (rect.top + rect.height) / sizeOfTile; i++) {
             for (int j = (int)rect.left / sizeOfTile; j < (rect.left + rect.width) / sizeOfTile; j++) {
                 if (tileMap.map[i][j] == '1') {
-                    if ((dx > 0) && (dir == 0))
-                        rect.left = j * sizeOfTile - rect.width;
-                    if ((dx < 0) && (dir == 0))
-                        rect.left = j * sizeOfTile + rect.width;
-                    if ((dy > 0) && (dir == 1)) {
-                        rect.top = i * sizeOfTile - rect.height ;
-                        dy = 0;
-                        onGround = true;
-                    }
-                    if ((dy < 0) && (dir == 1)) {
-                        rect.top = i * sizeOfTile + sizeOfTile;
-                        dy = 0;
-                    }
+                    if ((dx > 0) && (dir == 0)) rect.left = j * sizeOfTile - rect.width;
+                    if ((dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
+                    if ((dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; dy = 0; onGround = true; }
+                    if ((dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; dy = 0; }
                 }
             }
         }
-
     }
 
-    @Override
-    public void bulletColl(Bullet bullet) {
+    public void bulletColl(BulletEnemy bullet) {
         if (bullet.getX() > rect.left && bullet.getX() < rect.left + 32 && bullet.getY() < rect.top + 32 && bullet.getY() > rect.top) {
             hit();
         }

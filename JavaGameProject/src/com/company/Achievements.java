@@ -2,18 +2,22 @@ package com.company;
 
 import java.awt.*;
 
+
 public class Achievements {
     private int x;
     private int y;
     private int h;
     private int w;
-    private String[] text  = new String[3];
+    private boolean findSecret = false;
+    private String secret = "";
 
-    Achievements(){
+    Achievements(){}
 
-    }
     public void draw(Graphics2D g){
-
+        g.setColor(Color.CYAN);
+        if(findSecret) secret = "found";
+        else secret = " - ";
+        g.drawString("Secret item: " +  secret, 100, 100);
     }
 
 }

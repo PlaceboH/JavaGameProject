@@ -16,7 +16,7 @@ public class Menu {
         x = 32*23/2 ;
         y = 90;
         list[0] = "Play";
-        list[1] = "Statistic";
+        list[1] = "Achievements";
         list[2] = "Exit";
     }
 

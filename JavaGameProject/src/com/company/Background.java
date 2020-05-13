@@ -19,6 +19,10 @@ public class Background {
             g.drawImage(menuImg2, 100, -30, null);
             g.drawImage(menuImg, 0, -100, null);
         }
+        else if(GameP.isMenu.equals(GameP.STATE.ACHIVE)){
+            //    menuImg.getScaledInstance(1000, 1000, 1);
+            g.drawImage(menuImg2, 0, -100, null);
+        }
         else {
             g.drawImage(img, 0, 0, null);
         }

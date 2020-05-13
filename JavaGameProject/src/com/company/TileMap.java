@@ -12,14 +12,9 @@ public class TileMap {
     private int mapHeight;
     protected char [][] map;
 
-    public int getMapWidth(){ return mapWidth; }
     public int getX(){ return  x; }
     public int getY(){ return  y; }
-    public int getCol(int x){ return  x / tileSize; }
-    public int getRow(int y){ return  y /tileSize; }
     public int getTileSize(){ return tileSize; }
-    public void setX(int sx){ x = sx; }
-    public void setY(int sy){ y = sy; }
 
     public TileMap(String s, int tileSize){
         this.tileSize = tileSize;
@@ -43,7 +38,11 @@ public class TileMap {
 
     }
 
-    public void update(){}
+    public void update(){
+        if( GameP.player.getX() > GameP.WIDTH/2 && GameP.player.getX() < tileSize * mapWidth - GameP.WIDTH/2) {
+            x = ((int) (GameP.player.getX() - GameP.WIDTH / 2));
+        }
+    }
 
     public void draw(Graphics2D g){
         for(int i = 0; i < mapHeight; i++){
@@ -57,7 +56,6 @@ public class TileMap {
                 else if(map[i][j] == 'e'){
                     map[i][j] = ' ';
                     GameP.easyEnemies.add(new EasyEnemy(GameP.tileMap, j*32, i*32));
-
                 }
                 else{
                     System.out.println("Error draw tails");

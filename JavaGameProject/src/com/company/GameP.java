@@ -24,8 +24,6 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private int FPS = 60;
     private long targetTime = 1000/FPS;
 
-
-
     // img
     private BufferedImage img;
     private Graphics2D g;
@@ -36,8 +34,8 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     public static TileMap tileMap;
     public static Player player;
     public static ArrayList<EasyEnemy> easyEnemies;
-    public static ArrayList<Bullet> bullets;
-
+    public static ArrayList<BulletPlayer> bullets;
+    public static ArrayList<BulletEnemy> enemyBullets;
 
 
     public GameP(){
@@ -59,6 +57,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private void initialization(){
         isRun = true;
         menu = new Menu();
+        achievements = new Achievements();
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) img.getGraphics();
         tileMap = new TileMap("JavaGameProject/src/com/company/map1.txt", 32);
@@ -67,7 +66,8 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         player.setX(250);
         player.setY(200);
         easyEnemies = new ArrayList<EasyEnemy>();
-        bullets = new ArrayList<Bullet>();
+        bullets = new ArrayList<BulletPlayer>();
+        enemyBullets = new ArrayList<BulletEnemy>();
     }
 
     @Override
@@ -98,7 +98,6 @@ public class GameP extends JPanel implements Runnable, KeyListener {
             }
             draw();
 
-
             elapsedTimer = (System.nanoTime() - startTimer)/1000000;
             pausedTimer = Math.abs(targetTime - elapsedTimer);
 
@@ -108,7 +107,6 @@ public class GameP extends JPanel implements Runnable, KeyListener {
             catch (Exception e){
                 e.printStackTrace();
             }
-
         }
 
     }
@@ -117,14 +115,26 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private void update(){
         tileMap.update();
         player.update();
-        for(int i = 0; i < bullets.size(); i++ ){
+        //   Player bullets update
+        for(int i = 0; i < bullets.size(); i++){
             bullets.get(i).update();
             boolean remove = bullets.get(i).remove();
-            if(remove == true){
+            if(remove){
                 bullets.remove(i);
                 i--;
             }
         }
+        // Enemy bullets update
+        for(int i = 0; i < enemyBullets.size(); i++){
+            enemyBullets.get(i).update();
+            boolean remove = enemyBullets.get(i).remove();
+            if(remove){
+                enemyBullets.remove(i);
+                i--;
+            }
+        }
+
+
         for(int i = 0; i < easyEnemies.size(); i++ ){
             easyEnemies.get(i).update();
             boolean remove = easyEnemies.get(i).remove();
@@ -144,16 +154,19 @@ public class GameP extends JPanel implements Runnable, KeyListener {
                         break;
                     }
                 }
+                for(int j = 0; j < enemyBullets.size(); j++){
+                    int hp = player.health;
+                    player.bulletColl(enemyBullets.get(j));
+                    if( hp != player.health){
+                        enemyBullets.remove(j);
+                        break;
+                    }
+                }
                 if (e.remove() == true) {
                     easyEnemies.remove(i);
                     i--;
                 }
-                double dx = e.rect.left - player.getX();
-                double dy = e.rect.top - player.getY();
-                double dist = Math.sqrt(dx * dx + dy * dy);
-                if ((int) dist <= 32) {
-                    player.hit();
-                }
+
             }
         }
     }
@@ -163,6 +176,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         tileMap.draw(g);
         for(int i = 0; i < bullets.size(); i++ ){
             bullets.get(i).draw(g);
+        }
+        for(int i = 0; i < enemyBullets.size(); i++ ){
+            enemyBullets.get(i).draw(g);
         }
         player.draw(g);
 
@@ -193,10 +209,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
             if(code == keyEvent.VK_ENTER) {
                 if(menu.getSelectIndex() == 0) {
                     isMenu = STATE.PLAY;
-                    player.timerShock();
                 }
                 else if( menu.getSelectIndex() == 1){
-
+                    isMenu = STATE.ACHIVE;
                 }
                 else if( menu.getSelectIndex() == 2){
                     System.exit(0);
@@ -225,6 +240,11 @@ public class GameP extends JPanel implements Runnable, KeyListener {
             }
             if(code == keyEvent.VK_X){
                 player.setFiring(true);
+            }
+        }
+        else if( isMenu == STATE.ACHIVE){
+            if(code == keyEvent.VK_ESCAPE){
+                isMenu = STATE.MENU;
             }
         }
 
