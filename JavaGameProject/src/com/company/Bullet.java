@@ -2,39 +2,72 @@ package com.company;
 
 import java.awt.*;
 
-public class Bullet implements IBullet {
+/**
+ * Klasa Bulet opisuje podstawowe właściwości pocisków
+ */
+public class Bullet {
 
-    protected int speedX;
-    protected int speedY;
+    /**
+     *  SpeedX - prędkość pocisku wzdłuż osi x
+     *  SpeedY - prędkość pocisku wzdłuż osi y
+     */
+    protected int speedX, speedY;
+
+    /**
+     *  damage - zniszczalność pocisku
+     */
     protected int damage;
-    protected Color color;
-    protected double x;
-    protected double y;
-    protected int h;
-    protected int w;
 
-    @Override
+    /**
+     * color - kolor pocisku
+     */
+    protected Color color;
+
+    /**
+     * x,y połorzenie pocisku
+     */
+    protected double x, y;
+    /**
+     * w,h - rozmiary pocisku
+     */
+    protected int h, w;
+
+
+    /**
+     * @return x
+     */
     public double getX() {
         return x;
     }
 
-    @Override
+    /**
+     * @return y
+     */
     public double getY() {
         return y;
     }
 
-    @Override
+    /**
+     * @return damage
+     */
     public int getDamage() {
         return damage;
     }
 
-    @Override
+
+    /**
+     * Metoda update zmienia połorzenie pocisków
+     */
     public void update(){
         x += speedX;
         y += speedY;
     }
 
-    @Override
+
+    /**
+     *  Metoda remove
+     * @return true jeżeli pocisk trafił w przeszkodę na mapie
+     */
     public boolean remove(){
         for (int i = (int)y / GameP.tileMap.getTileSize(); i < (y + h) / GameP.tileMap.getTileSize(); i++) {
             for (int j = (int)x / GameP.tileMap.getTileSize(); j < (x + w) / GameP.tileMap.getTileSize(); j++) {

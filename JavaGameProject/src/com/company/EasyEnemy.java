@@ -1,10 +1,25 @@
 package com.company;
 
+
+/**
+ * Klasa EasyEnemy opisuje pierwszy rodzaj wrogów
+ * Dziedziczy od klasy Enemy
+ */
 public class EasyEnemy extends Enemy {
 
-    private long firingTimer;
-    private long firingDelay;
+    /**
+     * firingTimer - timer dla strzelby
+     * firingDelay - wyznacza ile pocisków na sekundę maksymalnie może wystrzelić EasyEnemy
+     */
+    private long firingTimer, firingDelay;
 
+
+    /**
+     *  Konstruktor nadaje prędkość, zdrowie, położenie, rozmiar i firing delay dla obiektów EasyEnemy
+     * @param tMap - tailMap
+     * @param x - położenie wg osi ox
+     * @param y - położenie wg osi oy
+     */
     EasyEnemy(TileMap tMap, int x, int y){
         super(tMap, x , y, 32, 32);
         dx = 1.5;
@@ -16,6 +31,10 @@ public class EasyEnemy extends Enemy {
 
     }
 
+
+    /**
+     *  Metoda update jest odpowiedzialna za logikę obiektów EasyEnemy, poruszanie się, atakowanie.
+     */
     @Override
     public void update() {
         super.update();

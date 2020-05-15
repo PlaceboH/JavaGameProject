@@ -2,24 +2,70 @@ package com.company;
 
 import java.awt.*;
 
+/**
+ * Klasa Enemy opisuje podstawowe właściwości wrogów EasyEnemy i HardEnemy
+ */
 class Enemy implements Entity {
 
+    /**
+     *  stayRight - jest prawdą gdy wróg 'patrzy' w prawą stronę
+     */
     protected boolean stayRight = false;
+    /**
+     *  detected - jest prawdą gdy wróg widzi bohatera
+     */
     protected boolean detected = false;
+
+    /**
+     * Prędkość spadania
+     */
     protected double fallingSpeed;
+
+    /**
+     *  dx - prądkość poruszania się w lewo, prawo
+     *  dy - predkość poruszania się w dół, górę
+     */
     protected double dx,dy;
-    protected boolean onGround, life;
+
+    /**
+     *  onGround - jest prawdą gdy wróg stoi na ziemi
+     */
+    protected boolean onGround;
+    /**
+     *  Czy wróg żyje
+     */
+    protected boolean life;
+    /**
+     *  zdrowie wrogów
+     */
     protected int health;
 
-    protected Entity.FloatRect rect;
+    /**
+     *  połorzenie (x,y) i rozmir (width, height)
+     */
+    protected FloatRect rect;
     protected TileMap tileMap;
 
+
+    /**
+     * Konstruktor nadaje enemy rozmiar i położenie
+     * @param tMap - mapka
+     * @param x - połorzenie wg osi x enemy
+     * @param y - połorzemie wg osi y enemy
+     * @param w - szerokość wroga
+     * @param h - wysokość wroga
+     */
     Enemy(TileMap tMap, int x, int y, int w, int h){
         rect = new FloatRect(x, y, w, h);
         life = true;
         tileMap = tMap;
     }
 
+
+
+    /**
+     *  Metoda update jest odpowiedzialna za podstawową logike poruszania się wrogów
+     */
     @Override
     public void update() {
 
@@ -41,6 +87,10 @@ class Enemy implements Entity {
         Collision(1);
     }
 
+    /**
+     * @return false - jeżeli życie wroga jest większe od zera
+     * @return true - w przeciwnym przypadku
+     */
     public boolean remove(){
         if(health > 0){
             return false;
@@ -48,6 +98,11 @@ class Enemy implements Entity {
         else { return  true; }
     }
 
+
+    /**
+     * Zetknięcie się wrogów z przeszkodami na mapie
+     * @param dir - oś ox dir = 0  lub oy dla dir = 1
+     */
     @Override
     public void Collision(int dir) {
         int sizeOfTile = tileMap.getTileSize();
@@ -66,6 +121,11 @@ class Enemy implements Entity {
         }
     }
 
+
+    /**
+     * Sprawdza czy pocisk bohatera trafił w enemy
+     * @param bullet - pocisk bohatera
+     */
     public void bulletColl(BulletPlayer bullet) {
         if (bullet.getX() > rect.left && bullet.getX() < rect.left + 32 && bullet.getY() < rect.top + 32 && bullet.getY() > rect.top) {
             health -= bullet.getDamage();
@@ -74,6 +134,10 @@ class Enemy implements Entity {
         }
     }
 
+    /**
+     * Metoda draw wyświetla wrogów
+     * @param  g - obiekt wspomagający wyświetlaniu
+     */
     public void draw(Graphics2D g) {
         g.setColor(Color.red);
         g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);

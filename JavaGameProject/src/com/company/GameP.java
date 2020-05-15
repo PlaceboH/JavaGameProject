@@ -10,20 +10,43 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 
+
+/**
+ *  Klasa dyrygująca
+ */
 public class GameP extends JPanel implements Runnable, KeyListener {
 
+    /**
+     * szerokość okna aplikacji
+     */
     public static final int WIDTH = 32 * 23;
+
+    /**
+     * wysokość okienka aplikacji
+     */
     public static final int HEIGHT = 512;
 
+    /**
+     *  możliwe stany w kórym może być aplikacja
+     */
     public enum STATE {PLAY, MENU, ACHIVE}
+
+    /**
+     *  stan aplikacji
+     */
     public static STATE isMenu = STATE.MENU;
 
-    // thread
+    /**
+     * Wątek potrzebny do umożliwienia reakcji interfejsu na działalność użytkownika
+      przy przetwarzaniu pewnej informacji
+     */
     private Thread thread;
-    private boolean isRun;
+
+    /**
+     *  Ilość klatek na sekundę
+     */
     private int FPS = 60;
     private long targetTime = 1000/FPS;
-
     // img
     private BufferedImage img;
     private Graphics2D g;
@@ -33,14 +56,14 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private Achievements achievements;
     public static TileMap tileMap;
     public static Player player;
-    public static ArrayList<EasyEnemy> easyEnemies;
+    public static ArrayList<Enemy> enemies;
     public static ArrayList<BulletPlayer> bullets;
     public static ArrayList<BulletEnemy> enemyBullets;
 
 
+
     public GameP(){
         super();
-        setPreferredSize(new Dimension(WIDTH , HEIGHT));
         setFocusable(true);
         requestFocus();
     }
@@ -54,43 +77,42 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         addKeyListener(this);
     }
 
+    /**
+     * Metoda inicjalizuje wszystkie obiekty aplikacji( oprócz GameP oczywiście )
+     */
     private void initialization(){
-        isRun = true;
         menu = new Menu();
         achievements = new Achievements();
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) img.getGraphics();
         tileMap = new TileMap("JavaGameProject/src/com/company/map1.txt", 32);
-        backImg = new Background("JavaGameProject/Image/Back2.jpg", "JavaGameProject/Image/Lif9.gif");
-        player = new Player(tileMap);
+        backImg = new Background("JavaGameProject/Image/Back2.jpg", "JavaGameProject/Image/Back2.jpg");
+        player = new Player();
         player.setX(250);
         player.setY(200);
-        easyEnemies = new ArrayList<EasyEnemy>();
+        enemies = new ArrayList<Enemy>();
         bullets = new ArrayList<BulletPlayer>();
         enemyBullets = new ArrayList<BulletEnemy>();
     }
 
+
+
+    /**
+     *  Metoda run inicjalizuje główną pętlę gry
+     */
     @Override
     public void run() {
         initialization();
         long startTimer;
         long elapsedTimer;
         long pausedTimer;
-        while (isRun){
+        while (true){
             startTimer = System.nanoTime();
             if(isMenu == STATE.MENU){
-                try {
-                    backImg.draw(g);
-                    menu.draw(g);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (FontFormatException e) {
-                    e.printStackTrace();
-                }
+                renderMenu();
             }
             else if(isMenu == STATE.ACHIVE){
-                backImg.draw(g);
-                achievements.draw(g);
+                renderAchievements();
             }
             else{
                 update();
@@ -112,6 +134,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     }
 
 
+    /**
+     *  Metoda update wywołuje metody update obiektów tileMap, player, bullet, enemies, enemyBullet
+     */
     private void update(){
         tileMap.update();
         player.update();
@@ -135,17 +160,17 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         }
 
 
-        for(int i = 0; i < easyEnemies.size(); i++ ){
-            easyEnemies.get(i).update();
-            boolean remove = easyEnemies.get(i).remove();
+        for(int i = 0; i < enemies.size(); i++ ){
+            enemies.get(i).update();
+            boolean remove = enemies.get(i).remove();
             if(remove == true){
-                easyEnemies.remove(i);
+                enemies.remove(i);
                 i--;
             }
         }
         if(player.getLife() == true) {
-            for (int i = 0; i < easyEnemies.size(); i++) {
-                Enemy e = easyEnemies.get(i);
+            for (int i = 0; i < enemies.size(); i++) {
+                Enemy e = enemies.get(i);
                 for (int j = 0; j < bullets.size(); j++) {
                     int hp = e.health;
                     e.bulletColl(bullets.get(j));
@@ -163,7 +188,7 @@ public class GameP extends JPanel implements Runnable, KeyListener {
                     }
                 }
                 if (e.remove() == true) {
-                    easyEnemies.remove(i);
+                    enemies.remove(i);
                     i--;
                 }
 
@@ -171,6 +196,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         }
     }
 
+    /**
+     * Metoda wywołuje metody wyświetlania obiektów gry
+     */
     private void render(){
         backImg.draw(g);
         tileMap.draw(g);
@@ -182,10 +210,34 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         }
         player.draw(g);
 
-        for(int i = 0; i < easyEnemies.size(); i++ ){
-            easyEnemies.get(i).draw(g);
+        for(int i = 0; i < enemies.size(); i++ ){
+            enemies.get(i).draw(g);
         }
     }
+
+
+    /**
+     * Metoda wywołuje metody wyświetlania obiektów menu i backImg
+     */
+    private void renderMenu(){
+        try {
+            backImg.draw(g);
+            menu.draw(g);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metoda wywołuje metody wyświetlania obiektów achievements i backImg
+     */
+    private void renderAchievements(){
+        backImg.draw(g);
+        achievements.draw(g);
+    }
+
 
     private void draw(){
         Graphics g2 = getGraphics(); // from graphics2d to graphics
@@ -196,15 +248,19 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyTyped(KeyEvent keyEvent) {}
 
+
+    /**
+     * Metoda odpowiadająca za reakcję programu na naciśnięcie pewnych klawiszy
+     */
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         int code = keyEvent.getKeyCode();
         if(isMenu == STATE.MENU){
             if(code == keyEvent.VK_UP){
-                menu.moveUp(g);
+                menu.moveUp();
             }
             if(code == keyEvent.VK_DOWN){
-                menu.moveDown(g);
+                menu.moveDown();
             }
             if(code == keyEvent.VK_ENTER) {
                 if(menu.getSelectIndex() == 0) {
@@ -250,6 +306,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
 
     }
 
+    /**
+     *  Reakcja programu na zwolnienie pewnych klawiszy
+     */
     @Override
     public void keyReleased(KeyEvent keyEvent) {
         int code = keyEvent.getKeyCode();
@@ -264,6 +323,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         }
         if(code == keyEvent.VK_UP){
             player.setLookUp(false);
+        }
+        if(code == keyEvent.VK_SPACE){
+            player.setJump(false);
         }
 
     }

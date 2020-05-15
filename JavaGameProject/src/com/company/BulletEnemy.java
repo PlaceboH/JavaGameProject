@@ -2,8 +2,17 @@ package com.company;
 
 import java.awt.*;
 
+/**
+ * Klasa BulletEnemy jest odpowiedzialna za pociski dla wrogów
+ */
 public class BulletEnemy extends Bullet {
 
+    /**
+     * Konstruktor zadaje położenie, prędkość, rozmiar, kolor, damage pocisku
+     * @param ex - położenie pocisku oś x
+     * @param ey - położenie pocisku oś y
+     * @param stayRight - czy wróg powrócony w prawą stronę
+     */
     BulletEnemy(int ex, int ey, boolean stayRight){
         x = ex + 16;
         y = ey + 13;
@@ -37,6 +46,12 @@ public class BulletEnemy extends Bullet {
         return damage;
     }
 
+
+
+    /**
+     * Metoda draw wyświetla pocisk
+     * @param  g - obiekt wspomagający wyświetlaniu
+     */
     public void draw(Graphics2D g){
         g.setColor(color);
         g.fillRect((int)x -  GameP.tileMap.getX(), (int)y - GameP.tileMap.getY() , w, h);

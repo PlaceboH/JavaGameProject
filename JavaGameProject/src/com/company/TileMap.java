@@ -3,19 +3,56 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.*;
 
+/**
+ *  Klasa TileMap jest odpowiedzialna za stworzenie mapy dla gry
+ */
 public class TileMap {
-    private int x;
-    private int y;
+    /**
+     *  x,y - współrzędne 'kamery', czyli ten kawałek mapki, który widzi użytkownik
+     */
+    private int x, y;
+
+    /**
+     *  Rozmiar jednostki tekstury(poligonu)
+     */
     private int tileSize;
-    private int mapWidth;
+
+    /**
+     *  Szerokość i wysokość mapki
+     */
+    private int mapWidth, mapHeight;;
+
+    /**
+     *  obrazek tekstury(poligonu)
+     */
     private Image img;
-    private int mapHeight;
+
+    /**
+     *  Tablica znaków mapki
+     */
     protected char [][] map;
 
+    /**
+     * @return x
+     */
     public int getX(){ return  x; }
+
+    /**
+     * @return y
+     */
     public int getY(){ return  y; }
+
+    /**
+     * @return tileSize
+     */
     public int getTileSize(){ return tileSize; }
 
+
+    /**
+     * Konstruktor wyznacza rozmiary mapki i wypełnia tablicę znaków(map)
+     * @param tileSize - zadany rozmiar poligonu
+     * @param s - link na txt plik z mapką
+     */
     public TileMap(String s, int tileSize){
         this.tileSize = tileSize;
         img = new ImageIcon("JavaGameProject/Image/plates.png").getImage();
@@ -38,12 +75,19 @@ public class TileMap {
 
     }
 
+    /**
+     *  Przesunięcie kamery za graczem (wzdłuż osi ox)
+     */
     public void update(){
         if( GameP.player.getX() > GameP.WIDTH/2 && GameP.player.getX() < tileSize * mapWidth - GameP.WIDTH/2) {
             x = ((int) (GameP.player.getX() - GameP.WIDTH / 2));
         }
     }
 
+    /**
+     *  Wyświetlenie elementów mapki na ekranie
+     *  @param  g - obiekt wspomagający wyświetlaniu
+     */
     public void draw(Graphics2D g){
         for(int i = 0; i < mapHeight; i++){
             for(int j = 0; j < mapWidth; j++){
@@ -55,7 +99,7 @@ public class TileMap {
                 }
                 else if(map[i][j] == 'e'){
                     map[i][j] = ' ';
-                    GameP.easyEnemies.add(new EasyEnemy(GameP.tileMap, j*32, i*32));
+                    GameP.enemies.add(new EasyEnemy(GameP.tileMap, j*32, i*32));
                 }
                 else{
                     System.out.println("Error draw tails");

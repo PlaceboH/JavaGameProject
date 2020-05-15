@@ -2,14 +2,29 @@ package com.company;
 
 import java.awt.*;
 
+/**
+ * Klasa BulletEnemy jest odpowiedzialna za pociski dla bohatera
+ */
 public class BulletPlayer extends Bullet {
 
     @Override
     public int getDamage(){ return damage; }
 
+    /**
+     * @return x
+     */
     public double getX(){ return  x; }
+    /**
+     * @return y
+     */
     public double getY(){ return  y; }
 
+
+
+    /**
+     * Konstruktor zadaje położenie, prędkość, rozmiar, kolor, damage pocisku dla gracza
+     * @param changeBullets - czy trzeba zmienić rodzaj pocisków
+     */
     BulletPlayer(boolean changeBullets){
         x = GameP.player.getX() + 16;
         y = GameP.player.getY() + 13;
@@ -52,6 +67,12 @@ public class BulletPlayer extends Bullet {
         }
     }
 
+
+
+    /**
+     * Metoda draw wyświetla pocisk
+     * @param  g - obiekt wspomagający wyświetlaniu
+     */
     public void draw(Graphics2D g){
         g.setColor(color);
         g.fillRect((int)x -  GameP.tileMap.getX(), (int)y - GameP.tileMap.getY() , w, h);
