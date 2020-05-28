@@ -32,11 +32,10 @@ public class Background {
             g.drawImage(menuImg, -400, -100, null);
         }
         else if(GameP.isMenu.equals(GameP.STATE.ACHIVE)){
-            //    menuImg.getScaledInstance(1000, 1000, 1);
             g.drawImage(menuImg, 0, -200, null);
         }
         else {
-            g.drawImage(img, 0, 0, null);
+            g.drawImage(img, -50, -110, null);
         }
     }
 

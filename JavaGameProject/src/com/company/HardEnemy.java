@@ -12,13 +12,13 @@ public class HardEnemy extends Enemy {
      * @param x
      * @param y
      */
-    HardEnemy(TileMap tMap, int x, int y, int w, int h) {
-        super(tMap, x, y, w, h);
-        dx = 1;
+    HardEnemy(TileMap tMap, int x, int y) {
+        super(tMap, x, y, 32, 64);
+        dx = -1.75;
         dy = 0;
-        fallingSpeed = 4;
+        fallingSpeed = 3;
         health = 200;
-
+        name = TYPE.HARD;
     }
 
     /**
@@ -26,6 +26,38 @@ public class HardEnemy extends Enemy {
      */
     @Override
     public void update(){
+        super.update();
+
+        if(PlayState.player.getHealth() > 0) {
+            double px = PlayState.player.getX();
+            double py = PlayState.player.getY();
+            double ex = rect.left;
+            double ey = rect.top;
+            double distX = ex - px;
+            double distY = ey - py;
+            int absX = Math.abs((int) distX);
+            int absY = Math.abs((int) distY);
+            double dist = Math.sqrt(distX * distX + distY * distY);
+
+            if ((int) dist <= 32) {
+                PlayState.player.hit();
+            }
+            if (absX < (GameP.WIDTH/2) + 32 && absY < 32) {
+                detected = true;
+                if (px > ex) {
+                    dx = +2;
+                } else if (px < ex) {
+                    dx = -2;
+                }
+            }
+            else {
+                detected = false;
+            }
+        }
+        else{
+            detected = false;
+        }
+
     }
 
 }

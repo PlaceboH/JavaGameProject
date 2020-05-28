@@ -1,5 +1,4 @@
 package com.company;
-import java.awt.*;
 
 /**
  * Klasa Player opisuje bohatera gry
@@ -26,8 +25,6 @@ public class Player implements Entity {
      */
     private boolean isLookUp = false;
 
-
-    //   private boolean isLay = false;
     /**
      * Czy bohater robi skok
      */
@@ -79,45 +76,45 @@ public class Player implements Entity {
     /**
      * health - zdrowie bohatera
      */
-    protected int health;
+    private int health;
+
+    private static int items = 0;
 
 
+    private TileMap tMap;
 
+    public int getItems(){ return items; }
     public void setX(int x){ rect.left = x; }
     public void setY(int y){ rect.top = y; }
     public float getX(){ return rect.left; }
     public float getY(){ return rect.top; }
-
+    public float getH(){ return rect.height; }
+    public float getW(){ return rect.width; }
+    public int getHealth(){ return health; }
+    public boolean getLife(){ return life; }
     public void setStayRight(boolean b){ stayRight = b; }
+    public boolean getStayRight() { return stayRight; }
     public void setStayLeft(boolean b){ stayLeft = b; }
     public void setLookUp(boolean b){ isLookUp = b; }
     public void setJump(boolean b){ isJump = b; }
     public void setFiring(boolean b){ isFiring = b;}
     public void setRun(boolean b){ isRun = b; }
 
-    public boolean getRun(){ return isRun; }
-    public boolean getLife(){ return life; }
-    public boolean getStayRight(){ return stayRight; }
-    public boolean getStayLeft(){ return stayLeft; }
-    //    public boolean getIsLay(){ return isLay; }
-    public boolean getLookUp(){ return isLookUp; }
-    public boolean getFiring(){ return isFiring; }
-    public boolean getChangeWeapon(){ return changeWeapon; }
-
 
     /**
      *  Konstruktor
      *  Inicjalizacja bohatera
      */
-    public Player(){
+    public Player(TileMap tileMap){
         rect = new FloatRect(100, 200, 32, 32);
         firingTimer = System.nanoTime();
         hitTimer = System.nanoTime();
-        firingDelay = 150;
+        firingDelay = 220;
         hitDelay = 1000;
         health = 100;
         dx = 0;
         dy = 0;
+        tMap = tileMap;
     }
 
 
@@ -132,7 +129,6 @@ public class Player implements Entity {
             dy = -5;
             hitTimer = System.nanoTime();
         }
-        System.out.println(health);
     }
 
 
@@ -191,7 +187,8 @@ public class Player implements Entity {
             if(isFiring){
                 long elapsed = (System.nanoTime() - firingTimer)/1000000;
                 if(elapsed > firingDelay) {
-                    GameP.bullets.add(new BulletPlayer(false));
+                    PlayState.bullets.add(new BulletPlayer(tMap, changeWeapon, rect.left, rect.top,
+                            stayRight, stayLeft, isLookUp, isRun));
                     firingTimer = System.nanoTime();
                 }
             }
@@ -219,14 +216,29 @@ public class Player implements Entity {
     @Override
     public void Collision(int dir) {
 
-        int sizeOfTile = GameP.tileMap.getTileSize();
+        int sizeOfTile = tMap.getTileSize();
         for (int i = (int)rect.top / sizeOfTile; i < (rect.top + rect.height) / sizeOfTile; i++) {
             for (int j = (int)rect.left / sizeOfTile; j < (rect.left + rect.width) / sizeOfTile; j++) {
-                if (GameP.tileMap.map[i][j] == '1') {
+                if (tMap.map[i][j] == 'B'
+                        || tMap.map[i][j] == 'K'
+                        || tMap.map[i][j] == 'L'
+                        || tMap.map[i][j] == 'W' ) {
+
                     if ((dx > 0) && (dir == 0)) rect.left = j * sizeOfTile - rect.width;
                     if ((dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
                     if ((dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; dy = 0; onGround = true; }
                     if ((dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; dy = 0; }
+                }
+                if(tMap.map[i][j] == 't'){
+                    hit();
+                }
+                if(tMap.map[i][j] == 'g'){
+                    tMap.map[i][j] = ' ';
+                    changeWeapon = true;
+                }
+                if(tMap.map[i][j] == 's'){
+                    tMap.map[i][j] = ' ';
+                    items++;
                 }
             }
         }
@@ -237,28 +249,11 @@ public class Player implements Entity {
      * @param bullet - pocisk wroga
      */
     public void bulletColl(BulletEnemy bullet) {
-        if (bullet.getX() > rect.left && bullet.getX() < rect.left + 32 && bullet.getY() < rect.top + 32 && bullet.getY() > rect.top) {
+        int x  = (int)((double)bullet.rect.x);
+        int y = (int)((double)bullet.rect.y);
+        if (x > rect.left && x < rect.left + 32 && y < rect.top + 32 && y > rect.top) {
             hit();
         }
     }
 
-
-    /**
-     * Metoda draw wyświetla bohatera i linię zdrowia bohatera
-     * @param  g - obiekt wspomagający wyświetlaniu
-     */
-    public void draw(Graphics2D g) {
-        g.setColor(Color.blue);
-        g.fillRect( (int)rect.left - GameP.tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
-
-        if(health > 20) {
-            g.setColor(Color.orange);
-        }
-        else {
-            g.setColor(Color.red);
-        }
-        g.fillRect(77, 25, health, 15);
-        g.drawString("Hp", 20, 50);
-
-    }
 }

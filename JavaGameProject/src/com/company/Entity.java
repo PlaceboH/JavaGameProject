@@ -4,7 +4,6 @@ package com.company;
  * interfej Entity opisuje podstawowe charakterystyki dla bohatera i Wrogów
  */
 public interface Entity {
-
     /**
      * Klasa opisuje wysokość, szerokość, położenie na osi ox i oy jednostki
      */

@@ -22,12 +22,13 @@ public class EasyEnemy extends Enemy {
      */
     EasyEnemy(TileMap tMap, int x, int y){
         super(tMap, x , y, 32, 32);
-        dx = 1.5;
+        dx = -1.5;
         dy = 0;
         fallingSpeed = 4;
         health = 100;
         firingTimer = System.nanoTime();
         firingDelay = 300;
+        name = TYPE.EASY;
 
     }
 
@@ -39,9 +40,9 @@ public class EasyEnemy extends Enemy {
     public void update() {
         super.update();
 
-        if(GameP.player.health > 0) {
-            double px = GameP.player.getX();
-            double py = GameP.player.getY();
+        if(PlayState.player.getHealth() > 0) {
+            double px = PlayState.player.getX();
+            double py = PlayState.player.getY();
             double ex = rect.left;
             double ey = rect.top;
             double distX = ex - px;
@@ -51,7 +52,7 @@ public class EasyEnemy extends Enemy {
             double dist = Math.sqrt(distX * distX + distY * distY);
 
             if ((int) dist <= 32) {
-                GameP.player.hit();
+                PlayState.player.hit();
             }
             if (absX < 170 && absY < 20) {
                 detected = true;
@@ -62,7 +63,7 @@ public class EasyEnemy extends Enemy {
                 }
                 long elapsed = (System.nanoTime() - firingTimer) / 1000000;
                 if (elapsed > firingDelay) {
-                    GameP.enemyBullets.add(new BulletEnemy((int) rect.left, (int) rect.top, stayRight));
+                    PlayState.enemyBullets.add(new BulletEnemy(tileMap ,rect.left, rect.top, stayRight));
                     firingTimer = System.nanoTime();
                 }
             }

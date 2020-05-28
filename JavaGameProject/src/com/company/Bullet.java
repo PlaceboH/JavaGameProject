@@ -1,12 +1,11 @@
 package com.company;
 
-import java.awt.*;
-
 /**
  * Klasa Bulet opisuje podstawowe właściwości pocisków
  */
 public class Bullet {
 
+    private TileMap tMap;
     /**
      *  SpeedX - prędkość pocisku wzdłuż osi x
      *  SpeedY - prędkość pocisku wzdłuż osi y
@@ -19,33 +18,9 @@ public class Bullet {
     protected int damage;
 
     /**
-     * color - kolor pocisku
+     * x,y połorzenie pocisku i rozmiary pocisku
      */
-    protected Color color;
-
-    /**
-     * x,y połorzenie pocisku
-     */
-    protected double x, y;
-    /**
-     * w,h - rozmiary pocisku
-     */
-    protected int h, w;
-
-
-    /**
-     * @return x
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * @return y
-     */
-    public double getY() {
-        return y;
-    }
+    protected Coordinate<Double> rect;
 
     /**
      * @return damage
@@ -55,23 +30,38 @@ public class Bullet {
     }
 
 
-    /**
-     * Metoda update zmienia połorzenie pocisków
-     */
-    public void update(){
-        x += speedX;
-        y += speedY;
+    Bullet(TileMap tileMap){
+        tMap = tileMap;
+        rect = new Coordinate<Double>(0.0, 0.0);
     }
 
 
     /**
-     *  Metoda remove
+     * Metoda update zmienia połorzenie pocisków
+     */
+    public void update(){
+        rect.x += speedX;
+        rect.y += speedY;
+    }
+
+
+    /**
+     *  Metoda remove sprawdza czy pocisk nie trafił w przeszkodę
      * @return true jeżeli pocisk trafił w przeszkodę na mapie
      */
     public boolean remove(){
-        for (int i = (int)y / GameP.tileMap.getTileSize(); i < (y + h) / GameP.tileMap.getTileSize(); i++) {
-            for (int j = (int)x / GameP.tileMap.getTileSize(); j < (x + w) / GameP.tileMap.getTileSize(); j++) {
-                if(GameP.tileMap.map[i][j] == '1' || GameP.tileMap.map[i][j] == '0'){
+        int tileSize =  tMap.getTileSize();
+        double y = rect.y;
+        double x = rect.x;
+
+        for (int i = (int)y / tileSize; i < (y + rect.h) / tileSize; i++) {
+            for (int j = (int)x / tileSize; j < (x + rect.w) / tileSize; j++) {
+                if (tMap.map[i][j] == 'B'
+                        || tMap.map[i][j] == 'K'
+                        || tMap.map[i][j] == 'L'
+                        || tMap.map[i][j] == 'W'
+                        || tMap.map[i][j] == '0'){
+
                     return true;
                 }
             }

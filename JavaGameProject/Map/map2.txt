@@ -1,0 +1,18 @@
+115
+16
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0                                                                                                                 0
+0                                                                                                                 0
+0                                                                                                                 0
+0                                                                                                                 0
+0                                                                                                                 0
+0                           L                                                                                     L
+0                        L                                                                                        L
+0                       L                                                                                         L
+0                 L                     L      L  W                                                 e             L
+L             L      L               L            W                            L                 LLLLLLL      ttttL
+L         L                      L           L    W                           WLL      e    E    LL        L  LLLLL
+L         L         ge        e          L        W  TTE T  T  T  E TTT  E  T WLLLLLLLLLLLLLLLLLLLL s      L      0
+LLLLLLLLLLLtttttttLLLLLtttttLLLLLtttttttttttttttttWWWWWWWWWWLWWWWLLWWWWLLLLWWWWLLLLLLLLLLLLLLLLLLLLtttttttLLLL    0
+LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLWWWWWWWWWWWWWWWWWWWWWWWWWLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLBBBBBBLL
+LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLWWWWWWWWWWWWWWWWWWWWWWLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLBBBBLLL

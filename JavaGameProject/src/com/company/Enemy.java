@@ -1,11 +1,13 @@
 package com.company;
 
-import java.awt.*;
 
 /**
  * Klasa Enemy opisuje podstawowe właściwości wrogów EasyEnemy i HardEnemy
  */
 class Enemy implements Entity {
+
+    protected enum TYPE {EASY, HARD}
+    protected static TYPE name;
 
     /**
      *  stayRight - jest prawdą gdy wróg 'patrzy' w prawą stronę
@@ -31,6 +33,7 @@ class Enemy implements Entity {
      *  onGround - jest prawdą gdy wróg stoi na ziemi
      */
     protected boolean onGround;
+
     /**
      *  Czy wróg żyje
      */
@@ -45,6 +48,7 @@ class Enemy implements Entity {
      */
     protected FloatRect rect;
     protected TileMap tileMap;
+
 
 
     /**
@@ -108,12 +112,11 @@ class Enemy implements Entity {
         int sizeOfTile = tileMap.getTileSize();
         for (int i = (int)rect.top / sizeOfTile; i < (rect.top + rect.height) / sizeOfTile; i++) {
             for (int j = (int)rect.left / sizeOfTile; j < (rect.left + rect.width) / sizeOfTile; j++) {
-                if (tileMap.map[i][j] == '1'){
+                if (tileMap.map[i][j] == 'B' || tileMap.map[i][j] == 'K' || tileMap.map[i][j] == 'L' || tileMap.map[i][j] == 'W' ){
                     if ((dx > 0) && (dir == 0)) rect.left = j * sizeOfTile - rect.width;
                     if ((dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
                     if ((dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; dy = 0; onGround = true; }
                     if ((dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; dy = 0; }
-
                     if(!detected) dx *= -1;
                 }
 
@@ -121,26 +124,19 @@ class Enemy implements Entity {
         }
     }
 
-
     /**
      * Sprawdza czy pocisk bohatera trafił w enemy
      * @param bullet - pocisk bohatera
      */
     public void bulletColl(BulletPlayer bullet) {
-        if (bullet.getX() > rect.left && bullet.getX() < rect.left + 32 && bullet.getY() < rect.top + 32 && bullet.getY() > rect.top) {
+        int x  = (int)((double)bullet.rect.x);
+        int y = (int)((double)bullet.rect.y);
+        if (x > rect.left && x < rect.left + 32  && y < rect.top * 2 && y > rect.top) {
             health -= bullet.getDamage();
             if(dx > 0) dx -= 0.02;
             else dx += 0.02;
         }
     }
 
-    /**
-     * Metoda draw wyświetla wrogów
-     * @param  g - obiekt wspomagający wyświetlaniu
-     */
-    public void draw(Graphics2D g) {
-        g.setColor(Color.red);
-        g.fillRect( (int)rect.left - tileMap.getX() ,(int)rect.top, (int)rect.width, (int)rect.height);
-    }
 
 }

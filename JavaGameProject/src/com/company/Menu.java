@@ -10,7 +10,7 @@ public class Menu {
     /**
      *  x,y - początkowe położenie tekstu
      */
-    private int x, y;
+    private Coordinate<Integer> point;
 
     /**
      *  odstęp wg osi oy między kolejnym tekstem
@@ -20,7 +20,7 @@ public class Menu {
     /**
      *  tablica potrzebna do przechowywania słów wyświetlających się w menu
      */
-    private String[] list  = new String[3];
+    private String[] states  = new String[3];
 
     /**
      *  indeks tablicy list
@@ -34,11 +34,10 @@ public class Menu {
     Menu(){
         selectIndex = 0;
         height = 50;
-        x = 32*23/2 ;
-        y = 90;
-        list[0] = "Play";
-        list[1] = "Achievements";
-        list[2] = "Exit";
+        point = new Coordinate<Integer>(32*23/2, 90);
+        states[0] = "Play";
+        states[1] = "Achievements";
+        states[2] = "Exit";
     }
 
 
@@ -54,7 +53,7 @@ public class Menu {
      * @param  g - obiekt wspomagający wyświetlaniu
      */
     public void draw(Graphics2D g) throws IOException, FontFormatException {
-        for(int i = 0; i < list.length; i++){
+        for(int i = 0; i < states.length; i++){
 
             if(i == selectIndex){
                 g.setColor(Color.orange);
@@ -62,11 +61,10 @@ public class Menu {
             else{
                 g.setColor(Color.CYAN);
             }
-
             Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("JavaGameProject/Fonts/Funkrocker.otf")).deriveFont(52f);
             g.setFont(customFont);
-            long length = (int) g.getFontMetrics().getStringBounds(list[i], g).getWidth();
-            g.drawString(list[i], x - (int)(length/2) , (y)*(i+1) + height);
+            long length = (int) g.getFontMetrics().getStringBounds(states[i], g).getWidth();
+            g.drawString(states[i], point.x - (int)(length/2) , (point.y)*(i+1) + height);
         }
 
     }
@@ -79,7 +77,7 @@ public class Menu {
             selectIndex--;
         }
         else {
-            selectIndex = list.length - 1;
+            selectIndex = states.length - 1;
         }
     }
 
@@ -87,7 +85,7 @@ public class Menu {
      *  zmiana indeksu tablicy o jeden do przodu
      */
     public void moveDown(){
-        if(selectIndex < list.length - 1) {
+        if(selectIndex < states.length - 1) {
             selectIndex++;
         }
         else{

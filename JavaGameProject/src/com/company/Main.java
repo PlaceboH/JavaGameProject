@@ -1,7 +1,9 @@
 package com.company;
 
 import javax.swing.JFrame;
-
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -12,7 +14,7 @@ public class Main {
     /**
      * @m main stwarza okno gry
      */
-    public static void main(String[] args) {
+    public static void main(String[] args){
         JFrame wind = new JFrame();
         wind.setContentPane(new GameP());
         wind.setTitle("The Downward spiral");
