@@ -4,8 +4,10 @@ package com.company;
 /**
  * Klasa Enemy opisuje podstawowe właściwości wrogów EasyEnemy i HardEnemy
  */
-class Enemy implements Entity {
+class Enemy implements Opponent {
 
+
+    boolean attack = false;
     protected enum TYPE {EASY, HARD}
     protected static TYPE name;
 
@@ -71,7 +73,20 @@ class Enemy implements Entity {
      *  Metoda update jest odpowiedzialna za podstawową logike poruszania się wrogów
      */
     @Override
-    public void update() {
+    public void update(double px, double py, int pHealth) {
+
+
+        if(pHealth > 0){
+            double ex = rect.left;
+            double ey = rect.top;
+            double distX = ex - px;
+            double distY = ey - py;
+            double dist = Math.sqrt(distX * distX + distY * distY);
+            if ((int) dist <= 32) {
+                attack = true;
+            }
+            else{ attack = false; }
+        }
 
         if(life) {
             rect.left += dx;

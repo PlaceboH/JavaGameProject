@@ -7,6 +7,7 @@ import java.awt.*;
  *  Klasa TileMap jest odpowiedzialna za stworzenie mapy dla gry
  */
 public class TileMap {
+
     /**
      *  x,y - współrzędne 'kamery', czyli ten kawałek mapki, który widzi użytkownik
      */
@@ -129,11 +130,11 @@ public class TileMap {
                 }
                 else if(map[i][j] == 'e'){
                     map[i][j] = ' ';
-                    PlayState.enemies.add(new EasyEnemy(this, j*32, i*32));
+                    PlayState.addEnemy( this, j, i, false);
                 }
                 else if(map[i][j] == 'E'){
                     map[i][j] = ' ';
-                    PlayState.enemies.add(new HardEnemy(this, j*32, i*32));
+                    PlayState.addEnemy( this, j, i, true);
                 }
                 else{
                     System.out.println("Error draw tails");

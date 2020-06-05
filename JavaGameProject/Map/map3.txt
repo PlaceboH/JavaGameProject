@@ -12,7 +12,7 @@
 0                                  L            L                                                                 L
 B                               B     s      L    W                            L                              ttttL
 B                               B     L   L       W           L                L                           L  LLLLL
-B                   e   e T  e BB                 W T e T e  LLL    T  E  e   LL    e         E       E   tL      L
+B                   e   e    e BB                 W T e T e  LLL    T  E  e   LL    e         E       E   tL      L
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtttttttttttttttttWWWWWWWWWWLLLLLWWWWWWWWWWWWLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL     L
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBLLLLLLLLLLLLLLLLLWWWWWWWWWWWWWWWWWWWWWWWWWLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLBBBBBBLL
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBLLLLLLLLLLLLLLLLLWWWWWWWWWWWWWWWWWWWWWWWWLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLBBBBLLL

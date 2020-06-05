@@ -37,23 +37,16 @@ public class EasyEnemy extends Enemy {
      *  Metoda update jest odpowiedzialna za logikę obiektów EasyEnemy, poruszanie się, atakowanie.
      */
     @Override
-    public void update() {
-        super.update();
-
-        if(PlayState.player.getHealth() > 0) {
-            double px = PlayState.player.getX();
-            double py = PlayState.player.getY();
+    public void update( double px, double py, int pHealth) {
+        super.update(px ,py, pHealth);
+        if(pHealth > 0) {
             double ex = rect.left;
             double ey = rect.top;
             double distX = ex - px;
             double distY = ey - py;
             int absX = Math.abs((int) distX);
             int absY = Math.abs((int) distY);
-            double dist = Math.sqrt(distX * distX + distY * distY);
 
-            if ((int) dist <= 32) {
-                PlayState.player.hit();
-            }
             if (absX < 170 && absY < 20) {
                 detected = true;
                 if (px > ex) {
@@ -63,7 +56,7 @@ public class EasyEnemy extends Enemy {
                 }
                 long elapsed = (System.nanoTime() - firingTimer) / 1000000;
                 if (elapsed > firingDelay) {
-                    PlayState.enemyBullets.add(new BulletEnemy(tileMap ,rect.left, rect.top, stayRight));
+                    PlayState.addEnemyBullet(tileMap, rect.left, rect.top, stayRight);
                     firingTimer = System.nanoTime();
                 }
             }

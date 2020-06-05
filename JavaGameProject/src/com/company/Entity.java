@@ -20,10 +20,6 @@ public interface Entity {
             this.height = height;
         }
     }
-    /**
-     *  logika poruszania się, zmiana położenia dla jednostki
-     */
-    void update();
 
     /**
      *  Zetknięcie się z przeszkodami na mapce

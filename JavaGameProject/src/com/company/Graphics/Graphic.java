@@ -3,13 +3,23 @@ package com.company.Graphics;
 import javax.swing.*;
 import java.awt.*;
 
+
+/**
+ *  Klasa interfejsu gry
+ */
 public class Graphic{
 
     /**
      * color - kolor pocisku
      */
     private Color color;
+    /**
+     * obrazak wrogów typu easy
+     */
     Image enemyEasyImg;
+    /**
+     *  obrazak wrogów typu hard
+     */
     Image enemyHardImg;
 
     public Graphic(){

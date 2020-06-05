@@ -5,6 +5,10 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class MenuState {
+
+    /**
+     * obiekt odpowiadający za Menu gry
+     */
     private  Menu menu;
 
     MenuState(){
@@ -24,6 +28,10 @@ public class MenuState {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Metoda odpowiadająca za reakcję programu na naciśnięcie pewnych klawiszy w sekcji menu
+     */
     public void keyPressed(KeyEvent keyEvent, int code){
         if(code == keyEvent.VK_UP){
             menu.moveUp();

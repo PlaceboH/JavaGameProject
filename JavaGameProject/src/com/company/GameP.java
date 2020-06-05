@@ -48,10 +48,25 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     private BufferedImage img;
     private Graphics2D g;
 
-    //my objects
+
+    /**
+     *  obiekt odpowiadający za stan menu
+     */
     private static MenuState menuState;
+
+    /**
+     *  obiekt odpowiadający za stan gry
+     */
     private static PlayState playState;
+
+    /**
+     *  obiekt odpowiadający za sekcję Achivements
+     */
     private Achievements achievements;
+
+    /**
+     *  obiekt odpowiadający wyrysowanie tła
+     */
     private Background backImg;
 
 
@@ -62,6 +77,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         requestFocus();
     }
 
+    /**
+     *  metoda potrzebna do funkcjonowania odczytywania klawiszy
+     */
     public void addNotify(){
         super.addNotify();
         if(thread == null){
@@ -121,11 +139,11 @@ public class GameP extends JPanel implements Runnable, KeyListener {
     }
 
     /**
-     *  Metoda update wywołuje metody update obiektów tileMap, player, bullet, enemies, enemyBullet
+     *  Metoda update wywołuje metody update obiektu playState
      */
     private void update(){
         playState.update();
-        achievements.setFindSecret(PlayState.player.getItems());
+        achievements.setFindSecret(PlayState.getPlayerItems());
         achievements.setKilledEnemies(PlayState.killedEnemies);
     }
 
@@ -145,6 +163,9 @@ public class GameP extends JPanel implements Runnable, KeyListener {
         achievements.draw(g);
     }
 
+    /**
+     * Metoda
+     */
     private void draw(){
         Graphics g2 = getGraphics(); // from graphics2d to graphics
         g2.drawImage(img, 0, 0, null);

@@ -1,9 +1,7 @@
 package com.company;
 
 import javax.swing.JFrame;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+
 
 
 /**
@@ -19,7 +17,7 @@ public class Main {
         wind.setContentPane(new GameP());
         wind.setTitle("The Downward spiral");
         wind.setVisible(true);
-        wind.setBounds(100, 100, 32*23, 512 );
+        wind.setBounds(50, 50, 32*23, 512 );
         wind.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }

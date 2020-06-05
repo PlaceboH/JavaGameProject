@@ -8,9 +8,9 @@ public class HardEnemy extends Enemy {
 
     /**
      *  Konstruktor nadaje prędkość, zdrowie, położenie, rozmiar i firing delay dla obiektów HardEnemy
-     * @param tMap
-     * @param x
-     * @param y
+     * @param tMap - TailMap
+     * @param x - położenie wg osi x
+     * @param y - położenie wg osi y
      */
     HardEnemy(TileMap tMap, int x, int y) {
         super(tMap, x, y, 32, 64);
@@ -21,27 +21,22 @@ public class HardEnemy extends Enemy {
         name = TYPE.HARD;
     }
 
+
     /**
      *  Metoda update jest odpowiedzialna za logikę obiektów HardEnemy, poruszanie się, atakowanie.
      */
     @Override
-    public void update(){
-        super.update();
+    public void update( double px, double py, int pHealth){
+        super.update(px, py, pHealth);
 
-        if(PlayState.player.getHealth() > 0) {
-            double px = PlayState.player.getX();
-            double py = PlayState.player.getY();
+        if(pHealth > 0) {
             double ex = rect.left;
             double ey = rect.top;
             double distX = ex - px;
             double distY = ey - py;
             int absX = Math.abs((int) distX);
             int absY = Math.abs((int) distY);
-            double dist = Math.sqrt(distX * distX + distY * distY);
 
-            if ((int) dist <= 32) {
-                PlayState.player.hit();
-            }
             if (absX < (GameP.WIDTH/2) + 32 && absY < 32) {
                 detected = true;
                 if (px > ex) {

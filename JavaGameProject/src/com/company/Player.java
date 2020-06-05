@@ -1,9 +1,11 @@
 package com.company;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 /**
  * Klasa Player opisuje bohatera gry
  */
-public class Player implements Entity {
+public class Player implements Hero {
 
     /**
      * Czy bohater strzela
@@ -13,7 +15,7 @@ public class Player implements Entity {
     /**
      * Czy bohater 'patrzy' w prawą stronę
      */
-    private boolean stayRight = false;
+    private boolean stayRight = true;
 
     /**
      * Czy bohater 'patrzy' w lewą stronę
@@ -94,10 +96,13 @@ public class Player implements Entity {
     public boolean getLife(){ return life; }
     public void setStayRight(boolean b){ stayRight = b; }
     public boolean getStayRight() { return stayRight; }
+    public boolean getStayLeft() { return stayLeft; }
     public void setStayLeft(boolean b){ stayLeft = b; }
+    public boolean getLookUp(){ return isLookUp; }
     public void setLookUp(boolean b){ isLookUp = b; }
     public void setJump(boolean b){ isJump = b; }
     public void setFiring(boolean b){ isFiring = b;}
+    public boolean getRun(){ return isRun; }
     public void setRun(boolean b){ isRun = b; }
 
 
@@ -122,6 +127,7 @@ public class Player implements Entity {
      *  Uderzenie bohatera
      *  Metoda odejmuje zdrowie bohaterowi nie częściej niż raz w 1 sekundę
      */
+    @Override
     public void hit(){
         long elapsed = (System.nanoTime() - hitTimer)/1000000;
         if(elapsed > hitDelay && life) {
@@ -187,8 +193,7 @@ public class Player implements Entity {
             if(isFiring){
                 long elapsed = (System.nanoTime() - firingTimer)/1000000;
                 if(elapsed > firingDelay) {
-                    PlayState.bullets.add(new BulletPlayer(tMap, changeWeapon, rect.left, rect.top,
-                            stayRight, stayLeft, isLookUp, isRun));
+                    PlayState.addPlayerBullet(tMap, changeWeapon);
                     firingTimer = System.nanoTime();
                 }
             }
@@ -206,7 +211,6 @@ public class Player implements Entity {
         onGround = false;
         Collision(1);
     }
-
 
 
     /**
@@ -248,6 +252,7 @@ public class Player implements Entity {
      * Metoda Sprawdza czy pocisk wrogów trafił w bohatera
      * @param bullet - pocisk wroga
      */
+    @Override
     public void bulletColl(BulletEnemy bullet) {
         int x  = (int)((double)bullet.rect.x);
         int y = (int)((double)bullet.rect.y);

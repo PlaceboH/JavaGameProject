@@ -6,9 +6,18 @@ import com.company.PlayState;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ *  klasa interfejsu bohatera
+ */
 public class PlayerGraphic {
 
+    /**
+     *  indeks poziomu
+     */
     private int level;
+    /**
+     *  obrazak bohatera
+     */
     Image playerImg;
 
     public PlayerGraphic(int level){
@@ -34,6 +43,9 @@ public class PlayerGraphic {
         }
     }
 
+    /**
+     * metoda wyświetla linię zdrowia bohatera i indeks poziomu na ekranie
+     */
     private void drawMessage(Graphics2D g, int playerHealth){
         g.setFont(new Font("Courier", Font.PLAIN, 32));
         g.setColor(Color.white);
