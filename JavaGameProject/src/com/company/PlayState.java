@@ -27,7 +27,7 @@ public class PlayState {
     /**
      *  obiekt odpowiadający za głównego bohatera(player)
      */
-    private static Player player;
+    private static Hero player;
     /**
      *  lista obiektów wrogów
      */
@@ -59,8 +59,8 @@ public class PlayState {
      */
     private void initObjects(){
         player = new Player(tileMap);
-        player.setX(150);
-        player.setY(GameP.HEIGHT - 300);
+        ((Player) player).setX(150);
+        ((Player) player).setY(GameP.HEIGHT - 300);
         enemies = new ArrayList<Enemy>();
         bullets = new ArrayList<BulletPlayer>();
         enemyBullets = new ArrayList<BulletEnemy>();
@@ -97,12 +97,12 @@ public class PlayState {
         }
         // draw enemies
         for(int i = 0; i < enemies.size(); i++){
-            graphic.drawEnemy(g, tileMap.getX(), enemies.get(i).rect.left, enemies.get(i).rect.top, enemies.get(i).rect.width, enemies.get(i).rect.height, enemies.get(i).stayRight);
+            graphic.drawEnemy(g, tileMap.getX(), enemies.get(i).rect.left, enemies.get(i).rect.top, enemies.get(i).rect.width, enemies.get(i).rect.height, enemies.get(i).getStayRight());
         }
         //draw map
         tileMap.draw(g);
         // draw player and health bar
-        playerGraphic.draw(g, (int)player.getX(), (int)player.getY(), (int)player.getW(), (int)player.getH(), tileMap.getX(), player.getHealth(), player.getStayRight());
+        playerGraphic.draw(g, (int)player.getX(), (int)player.getY(), (int)player.getW(), (int)player.getH(), tileMap.getX(), ((Player) player).getHealth(), ((Player) player).getStayRight());
     }
 
     /**
@@ -110,7 +110,8 @@ public class PlayState {
      *  Odpowiada za zmianę poziomu
      */
     private void updateLevel(){
-        if(player.getX() > (tileMap.getMapWidth()*tileMap.getTileSize()) - 100)
+        int tileSize = tileMap.getTileSize();
+        if(player.getX() > (tileMap.getMapWidth()*tileMap.getTileSize()) - tileSize*3)
         {
             level++;
             initLevel();
@@ -119,15 +120,9 @@ public class PlayState {
         tileMap.update(player.getX());
     }
 
-    /**
-     *  Metoda update wywołuje metody update obiektów tileMap, player, bullet, enemies, enemyBullet
-     */
-    public void update(){
-        if(level <= 3) {
-            updateLevel();
-        }
-        player.update();
-        // player bullets update and remove
+
+
+    private void playerBulletUpdate(){
         for(int i = 0; i < bullets.size(); i++){
             bullets.get(i).update();
             boolean remove = bullets.get(i).remove();
@@ -136,7 +131,9 @@ public class PlayState {
                 i--;
             }
         }
-        // Enemy bullets update
+    }
+
+    private void enemyBulletUpdate(){
         for(int i = 0; i < enemyBullets.size(); i++){
             enemyBullets.get(i).update();
             boolean remove = enemyBullets.get(i).remove();
@@ -145,34 +142,54 @@ public class PlayState {
                 i--;
             }
         }
-        // Enemy update
+    }
+
+    private void enemyUpdate(){
         for(int i = 0; i < enemies.size(); i++ ){
-            enemies.get(i).update(player.getX(), player.getY(), player.getHealth());
+            enemies.get(i).update(player.getX(), player.getY(), ((Player) player).getHealth());
             if(enemies.get(i).attack == true){
                 player.hit();
             }
         }
-        if(player.getLife() == true) {
+    }
+
+    private void interactEnemyAndBullets(Enemy e){
+        for (int j = 0; j < bullets.size(); j++) {
+            int hp = e.health;
+            e.bulletColl(bullets.get(j));
+            if (hp != e.health) {
+                bullets.remove(j);
+                break;
+            }
+        }
+    }
+
+    private void interactPlayerAndBullets(){
+        for(int j = 0; j < enemyBullets.size(); j++){
+            int hp = ((Player) player).getHealth();
+            player.bulletColl(enemyBullets.get(j));
+            if( hp != ((Player) player).getHealth()){
+                enemyBullets.remove(j);
+                break;
+            }
+        }
+    }
+
+    /**
+     *  Metoda update wywołuje metody update obiektów tileMap, player, bullet, enemies, enemyBullet
+     */
+    public void update(){
+        if(level <= 3){ updateLevel(); }
+        player.update();
+        playerBulletUpdate();
+        enemyBulletUpdate();
+        enemyUpdate();
+
+        if(((Player) player).getLife() == true) {
             for (int i = 0; i < enemies.size(); i++) {
                 Enemy e = enemies.get(i);
-                // interacts enemies and bullets
-                for (int j = 0; j < bullets.size(); j++) {
-                    int hp = e.health;
-                    e.bulletColl(bullets.get(j));
-                    if (hp != e.health) {
-                        bullets.remove(j);
-                        break;
-                    }
-                }
-                // interacts player and bullets
-                for(int j = 0; j < enemyBullets.size(); j++){
-                    int hp = player.getHealth();
-                    player.bulletColl(enemyBullets.get(j));
-                    if( hp != player.getHealth()){
-                        enemyBullets.remove(j);
-                        break;
-                    }
-                }
+                interactEnemyAndBullets(e);
+                interactPlayerAndBullets();
                 if (e.remove()) {
                     killedEnemies++;
                     enemies.remove(i);
@@ -184,25 +201,25 @@ public class PlayState {
     }
 
 
-
-    public static int getPlayerItems(){ return player.getItems(); }
+    public static int getPlayerItems(){ return ((Player) player).getItems(); }
 
     /**
      * Metoda dodaje nowych wrogów
      */
     public static void addEnemy(TileMap tileMap, int j, int i, boolean isHardEnemy){
+        int tileSize = tileMap.getTileSize();
         if(!isHardEnemy) {
-            enemies.add(new EasyEnemy(tileMap, j * 32, i * 32));
+            enemies.add(new EasyEnemy(tileMap, j * tileSize, i * tileSize));
         }
-        else { enemies.add(new HardEnemy(tileMap, j * 32, i * 32)); }
+        else { enemies.add(new HardEnemy(tileMap, j *tileSize , i * tileSize)); }
     }
 
     /**
      * Metoda dodaje nowy pocisk dla bohatera
      */
-    public static void addPlayerBullet(TileMap tMap, boolean changeWeapon){
-        PlayState.bullets.add(new BulletPlayer(tMap, changeWeapon, player.getX(), player.getY(),
-                player.getStayRight(), player.getStayLeft(), player.getLookUp(), player.getRun()));
+    public static void addPlayerBullet(TileMap tMap, boolean changeWeapon, double playerOX, double playerOY ){
+        PlayState.bullets.add(new BulletPlayer(tMap, changeWeapon, playerOX, playerOY,
+                ((Player) player).getStayRight(), ((Player) player).getStayLeft(), ((Player) player).getLookUp(), ((Player) player).getRun()));
     }
 
     /**
@@ -218,26 +235,26 @@ public class PlayState {
      */
     public void keyPressed(KeyEvent keyEvent, int code){
         if(code == keyEvent.VK_LEFT){
-            player.setStayLeft(true);
-            player.setRun(true);
-            player.setStayRight(false);
+            ((Player) player).setStayLeft(true);
+            ((Player) player).setRun(true);
+            ((Player) player).setStayRight(false);
         }
         if(code == keyEvent.VK_UP){
-            player.setLookUp(true);
+            ((Player) player).setLookUp(true);
         }
         if(code == keyEvent.VK_RIGHT){
-            player.setStayRight(true);
-            player.setRun(true);
-            player.setStayLeft(false);
+            ((Player) player).setStayRight(true);
+            ((Player) player).setRun(true);
+            ((Player) player).setStayLeft(false);
         }
         if(code == keyEvent.VK_SPACE){
-            player.setJump(true);
+            ((Player) player).setJump(true);
         }
         if(code == keyEvent.VK_ESCAPE){
             GameP.isMenu = GameP.STATE.MENU;
         }
         if(code == keyEvent.VK_X){
-            player.setFiring(true);
+            ((Player) player).setFiring(true);
         }
     }
 
@@ -247,19 +264,19 @@ public class PlayState {
      */
     public void keyReleased(KeyEvent keyEvent, int code) {
         if(code == keyEvent.VK_LEFT){
-            player.setRun(false);
+            ((Player) player).setRun(false);
         }
         if(code == keyEvent.VK_RIGHT){
-            player.setRun(false);
+            ((Player) player).setRun(false);
         }
         if(code == keyEvent.VK_X){
-            player.setFiring(false);
+            ((Player) player).setFiring(false);
         }
         if(code == keyEvent.VK_UP){
-            player.setLookUp(false);
+            ((Player) player).setLookUp(false);
         }
         if(code == keyEvent.VK_SPACE){
-            player.setJump(false);
+            ((Player) player).setJump(false);
         }
     }
 

@@ -11,7 +11,7 @@ public class BulletPlayer extends Bullet {
      */
     BulletPlayer(TileMap tileMap, boolean changeBullets , double px, double py, boolean stayRight, boolean stayLeft, boolean lookUp, boolean run){
         super(tileMap);
-        rect = new Coordinate<Double>(px + 16,py + 13 );
+        rect = new Coordinate<Double>(px ,py);
         speedY = 0;
         speedX = 0;
 

@@ -12,7 +12,7 @@ public class EasyEnemy extends Enemy {
      * firingDelay - wyznacza ile pocisków na sekundę maksymalnie może wystrzelić EasyEnemy
      */
     private long firingTimer, firingDelay;
-
+    double slowSpeed_dx;
 
     /**
      *  Konstruktor nadaje prędkość, zdrowie, położenie, rozmiar i firing delay dla obiektów EasyEnemy
@@ -22,15 +22,17 @@ public class EasyEnemy extends Enemy {
      */
     EasyEnemy(TileMap tMap, int x, int y){
         super(tMap, x , y, 32, 32);
-        dx = -1.5;
-        dy = 0;
+        position.dx = -1.5;
+        position.dy = 0;
         fallingSpeed = 4;
         health = 100;
         firingTimer = System.nanoTime();
         firingDelay = 300;
         name = TYPE.EASY;
+        slowSpeed_dx = 1.2;
 
     }
+
 
 
     /**
@@ -47,16 +49,17 @@ public class EasyEnemy extends Enemy {
             int absX = Math.abs((int) distX);
             int absY = Math.abs((int) distY);
 
-            if (absX < 170 && absY < 20) {
+            int tileSize = tileMap.getTileSize();
+            if (absX < tileSize*6 && absY < tileSize) {
                 detected = true;
                 if (px > ex) {
-                    dx = +1.2;
+                    position.dx = slowSpeed_dx;
                 } else if (px < ex) {
-                    dx = -1.2;
+                    position.dx = -slowSpeed_dx;
                 }
                 long elapsed = (System.nanoTime() - firingTimer) / 1000000;
                 if (elapsed > firingDelay) {
-                    PlayState.addEnemyBullet(tileMap, rect.left, rect.top, stayRight);
+                    PlayState.addEnemyBullet(tileMap, rect.left + rect.width/4, rect.top + rect.height/4, position.stayRight);
                     firingTimer = System.nanoTime();
                 }
             }

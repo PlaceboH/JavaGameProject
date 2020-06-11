@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.Graphics.Background;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;

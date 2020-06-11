@@ -4,17 +4,13 @@ package com.company;
 /**
  * Klasa Enemy opisuje podstawowe właściwości wrogów EasyEnemy i HardEnemy
  */
-class Enemy implements Opponent {
+class Enemy implements Entity {
 
 
     boolean attack = false;
     protected enum TYPE {EASY, HARD}
     protected static TYPE name;
 
-    /**
-     *  stayRight - jest prawdą gdy wróg 'patrzy' w prawą stronę
-     */
-    protected boolean stayRight = false;
     /**
      *  detected - jest prawdą gdy wróg widzi bohatera
      */
@@ -25,11 +21,7 @@ class Enemy implements Opponent {
      */
     protected double fallingSpeed;
 
-    /**
-     *  dx - prądkość poruszania się w lewo, prawo
-     *  dy - predkość poruszania się w dół, górę
-     */
-    protected double dx,dy;
+    double afterHitSpeed;
 
     /**
      *  onGround - jest prawdą gdy wróg stoi na ziemi
@@ -51,7 +43,9 @@ class Enemy implements Opponent {
     protected FloatRect rect;
     protected TileMap tileMap;
 
+    protected Position position;
 
+    public boolean getStayRight(){ return position.stayRight; }
 
     /**
      * Konstruktor nadaje enemy rozmiar i położenie
@@ -63,8 +57,10 @@ class Enemy implements Opponent {
      */
     Enemy(TileMap tMap, int x, int y, int w, int h){
         rect = new FloatRect(x, y, w, h);
+        position = new Position(0, 0, false, true, false);
         life = true;
         tileMap = tMap;
+        afterHitSpeed = -0.02;
     }
 
 
@@ -72,9 +68,7 @@ class Enemy implements Opponent {
     /**
      *  Metoda update jest odpowiedzialna za podstawową logike poruszania się wrogów
      */
-    @Override
     public void update(double px, double py, int pHealth) {
-
 
         if(pHealth > 0){
             double ex = rect.left;
@@ -87,21 +81,20 @@ class Enemy implements Opponent {
             }
             else{ attack = false; }
         }
-
         if(life) {
-            rect.left += dx;
+            rect.left += position.dx;
             Collision(0);
             if (!onGround) {
-                dy += fallingSpeed;
+                position.dy += fallingSpeed;
             }
-            if(dx > 0){
-                stayRight = true;
+            if(position.dx > 0){
+                position.stayRight = true;
             }
             else {
-                stayRight = false;
+                position.stayRight = false;
             }
         }
-        rect.top += dy;
+        rect.top += position.dy;
         onGround = false;
         Collision(1);
     }
@@ -128,11 +121,11 @@ class Enemy implements Opponent {
         for (int i = (int)rect.top / sizeOfTile; i < (rect.top + rect.height) / sizeOfTile; i++) {
             for (int j = (int)rect.left / sizeOfTile; j < (rect.left + rect.width) / sizeOfTile; j++) {
                 if (tileMap.map[i][j] == 'B' || tileMap.map[i][j] == 'K' || tileMap.map[i][j] == 'L' || tileMap.map[i][j] == 'W' ){
-                    if ((dx > 0) && (dir == 0)) rect.left = j * sizeOfTile - rect.width;
-                    if ((dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
-                    if ((dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; dy = 0; onGround = true; }
-                    if ((dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; dy = 0; }
-                    if(!detected) dx *= -1;
+                    if ((position.dx > 0) && (dir == 0)) rect.left = j * sizeOfTile - rect.width;
+                    if ((position.dx < 0) && (dir == 0)) rect.left = j * sizeOfTile + rect.width;
+                    if ((position.dy > 0) && (dir == 1)) { rect.top = i * sizeOfTile - rect.height ; position.dy = 0; onGround = true; }
+                    if ((position.dy < 0) && (dir == 1)) { rect.top = i * sizeOfTile + sizeOfTile; position.dy = 0; }
+                    if(!detected) position.dx *= -1;
                 }
 
             }
@@ -146,10 +139,10 @@ class Enemy implements Opponent {
     public void bulletColl(BulletPlayer bullet) {
         int x  = (int)((double)bullet.rect.x);
         int y = (int)((double)bullet.rect.y);
-        if (x > rect.left && x < rect.left + 32  && y < rect.top * 2 && y > rect.top) {
+        if (x > rect.left && x < rect.left + rect.width  && y < rect.top * 2 && y > rect.top) {
             health -= bullet.getDamage();
-            if(dx > 0) dx -= 0.02;
-            else dx += 0.02;
+            if(position.dx > 0) position.dx -= afterHitSpeed;
+            else position.dx += afterHitSpeed;
         }
     }
 

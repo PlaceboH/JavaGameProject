@@ -6,6 +6,8 @@ package com.company;
  */
 public class HardEnemy extends Enemy {
 
+    double playerDetectedSpeed;
+
     /**
      *  Konstruktor nadaje prędkość, zdrowie, położenie, rozmiar i firing delay dla obiektów HardEnemy
      * @param tMap - TailMap
@@ -14,11 +16,12 @@ public class HardEnemy extends Enemy {
      */
     HardEnemy(TileMap tMap, int x, int y) {
         super(tMap, x, y, 32, 64);
-        dx = -1.75;
-        dy = 0;
+        position.dx = -1.75;
+        position.dy = 0;
         fallingSpeed = 3;
         health = 200;
         name = TYPE.HARD;
+        playerDetectedSpeed = 2;
     }
 
 
@@ -37,12 +40,13 @@ public class HardEnemy extends Enemy {
             int absX = Math.abs((int) distX);
             int absY = Math.abs((int) distY);
 
-            if (absX < (GameP.WIDTH/2) + 32 && absY < 32) {
+            int tileSize = tileMap.getTileSize();
+            if (absX < (GameP.WIDTH/2) + tileSize  && absY < tileSize) {
                 detected = true;
                 if (px > ex) {
-                    dx = +2;
+                    position.dx = playerDetectedSpeed;
                 } else if (px < ex) {
-                    dx = -2;
+                    position.dx = -playerDetectedSpeed;
                 }
             }
             else {

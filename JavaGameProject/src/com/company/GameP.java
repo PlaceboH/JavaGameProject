@@ -1,5 +1,8 @@
 package com.company;
 
+import com.company.Graphics.Achievements;
+import com.company.Graphics.Background;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;

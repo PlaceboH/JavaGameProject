@@ -53,7 +53,6 @@ public class Bullet {
         int tileSize =  tMap.getTileSize();
         double y = rect.y;
         double x = rect.x;
-
         for (int i = (int)y / tileSize; i < (y + rect.h) / tileSize; i++) {
             for (int j = (int)x / tileSize; j < (x + rect.w) / tileSize; j++) {
                 if (tMap.map[i][j] == 'B'
@@ -61,7 +60,6 @@ public class Bullet {
                         || tMap.map[i][j] == 'L'
                         || tMap.map[i][j] == 'W'
                         || tMap.map[i][j] == '0'){
-
                     return true;
                 }
             }

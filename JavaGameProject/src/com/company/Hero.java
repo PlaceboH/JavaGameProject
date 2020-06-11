@@ -7,4 +7,9 @@ public interface Hero extends Entity {
     void hit();
     void update();
     void bulletColl(BulletEnemy bullet);
+    float getX();
+    float getY();
+    float getW();
+    float getH();
 }
+

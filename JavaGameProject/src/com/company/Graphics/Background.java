@@ -1,4 +1,5 @@
-package com.company;
+package com.company.Graphics;
+import com.company.GameP;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ public class Background {
      * @param s - adres dla obrazku
      * @param ms - adres dla obrazku dla menu
      */
-    Background(String s, String ms){
+    public Background(String s, String ms){
         img = new ImageIcon(s).getImage();
         menuImg = new ImageIcon(ms).getImage();
     }

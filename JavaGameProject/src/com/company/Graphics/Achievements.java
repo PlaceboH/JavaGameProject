@@ -1,4 +1,4 @@
-package com.company;
+package com.company.Graphics;
 import java.awt.*;
 
 /**
@@ -16,7 +16,7 @@ public class Achievements {
     public void setKilledEnemies(int killedEnemies){ this.killedEnemies = killedEnemies; }
     public void setFindSecret(int secretItems ){ this.secretItems = secretItems; }
 
-    Achievements(){
+    public Achievements(){
         secretItems = 0;
         killedEnemies = 0;
     }
